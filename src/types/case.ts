@@ -4,6 +4,6 @@ export interface Case {
   description: string;
   status: 'open' | 'in-progress' | 'closed';
   priority: 'low' | 'medium' | 'high';
-  assignedTo: string;
+  createdByName?: string;
   createdAt: string;
 }

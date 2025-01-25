@@ -37,7 +37,7 @@ export function CaseTable({ cases, onEdit, onDelete }: CaseTableProps) {
             <TableHead>Title</TableHead>
             <TableHead>Priority</TableHead>
             <TableHead>Status</TableHead>
-            <TableHead>Assigned To</TableHead>
+            <TableHead>Created By</TableHead>
             <TableHead>Created</TableHead>
             <TableHead>Actions</TableHead>
           </TableRow>
@@ -62,7 +62,7 @@ export function CaseTable({ cases, onEdit, onDelete }: CaseTableProps) {
               <TableCell>
                 <Badge variant="outline">{case_.status}</Badge>
               </TableCell>
-              <TableCell>{case_.assignedTo}</TableCell>
+              <TableCell>{case_.createdByName || "Unknown"}</TableCell>
               <TableCell>
                 {new Date(case_.createdAt).toLocaleDateString()}
               </TableCell>

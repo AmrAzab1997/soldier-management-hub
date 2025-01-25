@@ -66,7 +66,13 @@ const ActiveCasesPage = () => {
     try {
       const { data, error } = await supabase
         .from("cases")
-        .select("*")
+        .select(`
+          *,
+          profiles:created_by (
+            first_name,
+            last_name
+          )
+        `)
         .order("created_at", { ascending: false });
 
       if (error) throw error;
@@ -77,7 +83,9 @@ const ActiveCasesPage = () => {
         description: case_.description || "",
         status: case_.status as Case["status"],
         priority: case_.priority as Case["priority"],
-        assignedTo: case_.assigned_to || "",
+        createdByName: case_.profiles 
+          ? `${case_.profiles.first_name || ''} ${case_.profiles.last_name || ''}`.trim() || 'Unknown'
+          : 'Unknown',
         createdAt: case_.created_at,
       }));
 
@@ -228,7 +236,6 @@ const ActiveCasesPage = () => {
             description: selectedCase.description,
             priority: selectedCase.priority,
             status: selectedCase.status,
-            assignedTo: selectedCase.assignedTo,
           }}
           open={!!selectedCase}
           onOpenChange={(open) => !open && setSelectedCase(null)}
