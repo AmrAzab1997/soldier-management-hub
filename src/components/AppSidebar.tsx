@@ -89,16 +89,16 @@ export function AppSidebar() {
 
   return (
     <>
-      <div className="flex items-center justify-between p-4">
+      <div className="flex items-center justify-between p-3 md:p-4">
         <div className="flex items-center gap-2">
-          <ShieldCheck className="h-6 w-6 text-military-navy" />
+          <ShieldCheck className="h-5 w-5 md:h-6 md:w-6 text-military-navy" />
           <span className={cn("font-semibold transition-all", 
             state === "collapsed" && "hidden"
           )}>
             Military App
           </span>
         </div>
-        <SidebarTrigger className="absolute right-0 top-4 translate-x-1/2 transform bg-background p-1.5 shadow-md hover:bg-accent">
+        <SidebarTrigger className="absolute right-0 top-3 md:top-4 translate-x-1/2 transform bg-background p-1.5 shadow-md hover:bg-accent">
           <ChevronLeft className="h-4 w-4" />
         </SidebarTrigger>
       </div>
@@ -114,7 +114,7 @@ export function AppSidebar() {
                     isActive={isActiveRoute(item.path)}
                     tooltip={item.title}
                   >
-                    <Link to={item.path}>
+                    <Link to={item.path} className="flex items-center gap-2">
                       <item.icon className="size-4" />
                       <span>{item.title}</span>
                     </Link>
@@ -142,7 +142,7 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
-      <SidebarFooter className="mt-auto">
+      <SidebarFooter className="mt-auto p-3 md:p-4">
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton
