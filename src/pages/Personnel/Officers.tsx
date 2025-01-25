@@ -51,6 +51,7 @@ export default function OfficersPage() {
   const { toast } = useToast();
   const [officers, setOfficers] = useState<Officer[]>(mockOfficers);
   const [searchTerm, setSearchTerm] = useState("");
+  const [selectedOfficer, setSelectedOfficer] = useState<Officer | null>(null);
   const [filters, setFilters] = useState([
     {
       name: "Status",
@@ -101,38 +102,24 @@ export default function OfficersPage() {
     });
   };
 
-  const handleEdit = (officer: Officer) => {
-    const initialData = {
-      name: officer.name,
-      rank: officer.rank,
-      division: officer.division,
-      joinDate: officer.joinDate,
-    };
-
-    return (
-      <CreateResourceDialog
-        title="Edit Officer"
-        description="Update officer information"
-        fields={fields}
-        onSubmit={(data) => {
-          setOfficers(
-            officers.map((o) =>
-              o.id === officer.id
-                ? {
-                    ...o,
-                    ...data,
-                  }
-                : o
-            )
-          );
-          toast({
-            title: "Officer Updated",
-            description: "Officer information has been updated successfully.",
-          });
-        }}
-        initialData={initialData}
-      />
+  const handleEdit = (data: Record<string, string>) => {
+    if (!selectedOfficer) return;
+    
+    setOfficers(
+      officers.map((o) =>
+        o.id === selectedOfficer.id
+          ? {
+              ...o,
+              ...data,
+            }
+          : o
+      )
     );
+    setSelectedOfficer(null);
+    toast({
+      title: "Officer Updated",
+      description: "Officer information has been updated successfully.",
+    });
   };
 
   const handleFilterChange = (groupName: string, optionId: string) => {
@@ -210,7 +197,13 @@ export default function OfficersPage() {
                 </TableCell>
                 <TableCell>
                   <div className="flex items-center gap-2">
-                    {handleEdit(officer)}
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => setSelectedOfficer(officer)}
+                    >
+                      <Edit className="h-4 w-4" />
+                    </Button>
                     <AlertDialog>
                       <AlertDialogTrigger asChild>
                         <Button variant="ghost" size="icon">
@@ -242,6 +235,23 @@ export default function OfficersPage() {
           </TableBody>
         </Table>
       </div>
+
+      {selectedOfficer && (
+        <CreateResourceDialog
+          title="Edit Officer"
+          description="Update officer information"
+          fields={fields}
+          onSubmit={handleEdit}
+          initialData={{
+            name: selectedOfficer.name,
+            rank: selectedOfficer.rank,
+            division: selectedOfficer.division,
+            joinDate: selectedOfficer.joinDate,
+          }}
+          open={!!selectedOfficer}
+          onOpenChange={(open) => !open && setSelectedOfficer(null)}
+        />
+      )}
     </div>
   );
 }
