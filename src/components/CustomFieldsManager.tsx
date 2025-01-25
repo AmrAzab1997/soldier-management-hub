@@ -12,6 +12,7 @@ interface CustomFieldsManagerProps {
 
 export function CustomFieldsManager({ entity }: CustomFieldsManagerProps) {
   const { canManageFields } = usePermissions();
+  const [systemFields, setSystemFields] = useState<Field[]>([]);
   const [customFields, setCustomFields] = useState<Field[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [editingField, setEditingField] = useState<Field | null>(null);
@@ -25,7 +26,11 @@ export function CustomFieldsManager({ entity }: CustomFieldsManagerProps) {
 
   useEffect(() => {
     setIsLoading(true);
-    fetchCustomFields();
+    Promise.all([
+      fetchSystemFields(),
+      fetchCustomFields()
+    ]).finally(() => setIsLoading(false));
+
     // Reset form state when entity changes
     setEditingField(null);
     setNewField({
@@ -36,6 +41,33 @@ export function CustomFieldsManager({ entity }: CustomFieldsManagerProps) {
       entity,
     });
   }, [entity]);
+
+  const fetchSystemFields = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('entity_fields')
+        .select('*')
+        .eq('entity_type', entity)
+        .eq('is_system', true);
+
+      if (error) throw error;
+
+      const fields: Field[] = data.map(field => ({
+        id: field.id,
+        name: field.field_name,
+        label: field.field_label,
+        type: field.field_type as Field['type'],
+        required: field.is_required || false,
+        entity: field.entity_type as 'officer' | 'soldier' | 'case',
+        isSystem: true
+      }));
+
+      setSystemFields(fields);
+    } catch (error) {
+      console.error('Error fetching system fields:', error);
+      toast.error('Failed to load system fields');
+    }
+  };
 
   const fetchCustomFields = async () => {
     try {
@@ -59,8 +91,6 @@ export function CustomFieldsManager({ entity }: CustomFieldsManagerProps) {
     } catch (error) {
       console.error('Error fetching custom fields:', error);
       toast.error('Failed to load custom fields');
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -155,36 +185,48 @@ export function CustomFieldsManager({ entity }: CustomFieldsManagerProps) {
   }
 
   if (isLoading) {
-    return <div>Loading custom fields...</div>;
+    return <div>Loading fields...</div>;
   }
 
   return (
     <div className="space-y-6 p-4 bg-white rounded-lg shadow">
-      <h3 className="text-lg font-semibold">Manage Custom Fields for {entity}</h3>
+      <h3 className="text-lg font-semibold">Manage Fields for {entity}</h3>
       
-      {editingField ? (
-        <CustomFieldForm
-          field={editingField}
-          onSubmit={handleUpdateField}
-          onCancel={() => setEditingField(null)}
-          onChange={handleEditingFieldChange}
-          isEditing
+      <div className="mt-8">
+        <h4 className="text-md font-medium mb-4">System Fields</h4>
+        <CustomFieldsList
+          fields={systemFields}
+          onEdit={() => {}}
+          onDelete={() => {}}
+          isSystemFields={true}
         />
-      ) : (
-        <CustomFieldForm
-          field={newField}
-          onSubmit={handleAddField}
-          onChange={handleNewFieldChange}
-        />
-      )}
+      </div>
 
       <div className="mt-8">
-        <h4 className="text-md font-medium mb-4">Existing Custom Fields</h4>
-        <CustomFieldsList
-          fields={customFields}
-          onEdit={setEditingField}
-          onDelete={handleDeleteField}
-        />
+        <h4 className="text-md font-medium mb-4">Custom Fields</h4>
+        {editingField ? (
+          <CustomFieldForm
+            field={editingField}
+            onSubmit={handleUpdateField}
+            onCancel={() => setEditingField(null)}
+            onChange={handleEditingFieldChange}
+            isEditing
+          />
+        ) : (
+          <CustomFieldForm
+            field={newField}
+            onSubmit={handleAddField}
+            onChange={handleNewFieldChange}
+          />
+        )}
+
+        <div className="mt-4">
+          <CustomFieldsList
+            fields={customFields}
+            onEdit={setEditingField}
+            onDelete={handleDeleteField}
+          />
+        </div>
       </div>
     </div>
   );

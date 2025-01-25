@@ -114,6 +114,42 @@ export type Database = {
         }
         Relationships: []
       }
+      entity_fields: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          entity_type: string
+          field_label: string
+          field_name: string
+          field_type: string
+          id: string
+          is_required: boolean | null
+          is_system: boolean | null
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          entity_type: string
+          field_label: string
+          field_name: string
+          field_type: string
+          id?: string
+          is_required?: boolean | null
+          is_system?: boolean | null
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          entity_type?: string
+          field_label?: string
+          field_name?: string
+          field_type?: string
+          id?: string
+          is_required?: boolean | null
+          is_system?: boolean | null
+        }
+        Relationships: []
+      }
       officers: {
         Row: {
           badge_number: string

@@ -5,9 +5,10 @@ interface CustomFieldsListProps {
   fields: Field[];
   onEdit: (field: Field) => void;
   onDelete: (fieldId: string) => void;
+  isSystemFields?: boolean;
 }
 
-export function CustomFieldsList({ fields, onEdit, onDelete }: CustomFieldsListProps) {
+export function CustomFieldsList({ fields, onEdit, onDelete, isSystemFields = false }: CustomFieldsListProps) {
   return (
     <div className="space-y-4">
       {fields.map((field) => (
@@ -18,24 +19,29 @@ export function CustomFieldsList({ fields, onEdit, onDelete }: CustomFieldsListP
               Type: {field.type} | Name: {field.name} | Required: {field.required ? 'Yes' : 'No'}
             </p>
           </div>
-          <div className="space-x-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => onEdit(field)}
-            >
-              Edit
-            </Button>
-            <Button
-              variant="destructive"
-              size="sm"
-              onClick={() => onDelete(field.id)}
-            >
-              Delete
-            </Button>
-          </div>
+          {!isSystemFields && (
+            <div className="space-x-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => onEdit(field)}
+              >
+                Edit
+              </Button>
+              <Button
+                variant="destructive"
+                size="sm"
+                onClick={() => onDelete(field.id)}
+              >
+                Delete
+              </Button>
+            </div>
+          )}
         </div>
       ))}
+      {fields.length === 0 && (
+        <p className="text-gray-500 italic">No {isSystemFields ? 'system' : 'custom'} fields found.</p>
+      )}
     </div>
   );
 }

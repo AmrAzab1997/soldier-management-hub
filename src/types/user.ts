@@ -16,8 +16,9 @@ export interface Field {
   id: string;
   name: string;
   label: string;
-  type: 'text' | 'number' | 'date' | 'email' | 'select';
+  type: 'text' | 'number' | 'date' | 'email' | 'select' | 'textarea';
   required: boolean;
   options?: string[]; // For select fields
   entity: 'officer' | 'soldier' | 'case';
+  isSystem?: boolean;
 }
