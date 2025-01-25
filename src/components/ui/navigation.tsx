@@ -1,63 +1,96 @@
-import { NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger } from "@/components/ui/navigation-menu";
-import { Bell, FileText, Shield, Users } from "lucide-react";
+import { Link, useLocation } from "react-router-dom";
+import { cn } from "@/lib/utils";
+import { Users, FileText, Bell, Home } from "lucide-react";
 
-export const Navigation = () => {
+const navigationItems = [
+  { name: "Dashboard", href: "/dashboard", icon: Home },
+  {
+    name: "Personnel",
+    href: "/personnel",
+    icon: Users,
+    subItems: [
+      { name: "Officers", href: "/personnel/officers" },
+      { name: "Soldiers", href: "/personnel/soldiers" },
+    ],
+  },
+  {
+    name: "Cases",
+    href: "/cases",
+    icon: FileText,
+    subItems: [
+      { name: "Active Cases", href: "/cases/active" },
+      { name: "New Case", href: "/cases/new" },
+    ],
+  },
+  {
+    name: "Announcements",
+    href: "/announcements",
+    icon: Bell,
+    subItems: [
+      { name: "View All", href: "/announcements" },
+      { name: "New Announcement", href: "/announcements/new" },
+    ],
+  },
+];
+
+export function Navigation() {
+  const location = useLocation();
+
   return (
-    <div className="bg-military-navy text-white p-4">
-      <NavigationMenu>
-        <NavigationMenuList>
-          <NavigationMenuItem>
-            <NavigationMenuTrigger className="text-white hover:bg-military-navy/90">
-              <Users className="mr-2" />
-              Personnel
-            </NavigationMenuTrigger>
-            <NavigationMenuContent>
-              <div className="grid gap-3 p-4 w-[400px] bg-white text-military-navy">
-                <NavigationMenuLink href="/personnel/soldiers" className="block p-2 hover:bg-gray-100 rounded">
-                  Manage Soldiers
-                </NavigationMenuLink>
-                <NavigationMenuLink href="/personnel/officers" className="block p-2 hover:bg-gray-100 rounded">
-                  Manage Officers
-                </NavigationMenuLink>
+    <nav className="fixed top-0 z-50 w-full border-b border-gray-200 bg-white">
+      <div className="px-3 py-3 lg:px-5 lg:pl-3">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center justify-start">
+            <Link to="/dashboard" className="flex ml-2 md:mr-24">
+              <span className="self-center text-xl font-semibold sm:text-2xl whitespace-nowrap text-military-navy">
+                Military System
+              </span>
+            </Link>
+          </div>
+          <div className="flex items-center space-x-4">
+            {navigationItems.map((item) => (
+              <div key={item.name} className="relative group">
+                <Link
+                  to={item.subItems ? item.subItems[0].href : item.href}
+                  className={cn(
+                    "flex items-center px-3 py-2 text-sm font-medium rounded-lg",
+                    location.pathname === item.href ||
+                      (item.subItems &&
+                        item.subItems.some((subItem) =>
+                          location.pathname.startsWith(subItem.href)
+                        ))
+                      ? "text-military-navy bg-gray-100"
+                      : "text-gray-600 hover:bg-gray-100"
+                  )}
+                >
+                  <item.icon className="w-5 h-5 mr-2" />
+                  {item.name}
+                </Link>
+                {item.subItems && (
+                  <div className="absolute left-0 hidden pt-2 group-hover:block">
+                    <div className="bg-white border rounded-lg shadow-lg">
+                      {item.subItems.map((subItem) => (
+                        <Link
+                          key={subItem.name}
+                          to={subItem.href}
+                          className={cn(
+                            "block px-4 py-2 text-sm whitespace-nowrap",
+                            location.pathname === subItem.href
+                              ? "text-military-navy bg-gray-100"
+                              : "text-gray-600 hover:bg-gray-100"
+                          )}
+                        >
+                          {subItem.name}
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
-            </NavigationMenuContent>
-          </NavigationMenuItem>
-
-          <NavigationMenuItem>
-            <NavigationMenuTrigger className="text-white hover:bg-military-navy/90">
-              <FileText className="mr-2" />
-              Cases
-            </NavigationMenuTrigger>
-            <NavigationMenuContent>
-              <div className="grid gap-3 p-4 w-[400px] bg-white text-military-navy">
-                <NavigationMenuLink href="/cases/active" className="block p-2 hover:bg-gray-100 rounded">
-                  Active Cases
-                </NavigationMenuLink>
-                <NavigationMenuLink href="/cases/new" className="block p-2 hover:bg-gray-100 rounded">
-                  Create New Case
-                </NavigationMenuLink>
-              </div>
-            </NavigationMenuContent>
-          </NavigationMenuItem>
-
-          <NavigationMenuItem>
-            <NavigationMenuTrigger className="text-white hover:bg-military-navy/90">
-              <Bell className="mr-2" />
-              Announcements
-            </NavigationMenuTrigger>
-            <NavigationMenuContent>
-              <div className="grid gap-3 p-4 w-[400px] bg-white text-military-navy">
-                <NavigationMenuLink href="/announcements" className="block p-2 hover:bg-gray-100 rounded">
-                  View All
-                </NavigationMenuLink>
-                <NavigationMenuLink href="/announcements/new" className="block p-2 hover:bg-gray-100 rounded">
-                  Create New
-                </NavigationMenuLink>
-              </div>
-            </NavigationMenuContent>
-          </NavigationMenuItem>
-        </NavigationMenuList>
-      </NavigationMenu>
-    </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </nav>
   );
-};
+}
