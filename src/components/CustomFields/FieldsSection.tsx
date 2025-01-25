@@ -31,6 +31,11 @@ export function FieldsSection({
 }: FieldsSectionProps) {
   console.log('Rendering FieldsSection:', { title, fields, isSystemFields });
   
+  if (!Array.isArray(fields)) {
+    console.error('Fields is not an array:', fields);
+    return null;
+  }
+
   return (
     <div className="space-y-6">
       <h4 className="text-lg font-semibold">{title}</h4>
