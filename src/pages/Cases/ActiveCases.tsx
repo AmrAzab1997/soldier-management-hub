@@ -66,24 +66,13 @@ const ActiveCasesPage = () => {
     try {
       const { data: casesData, error } = await supabase
         .from("cases")
-        .select("*, created_by")
+        .select(`
+          *,
+          creator:profiles(first_name, last_name)
+        `)
         .order("created_at", { ascending: false });
 
       if (error) throw error;
-
-      // Fetch profiles separately for created_by users
-      const createdByIds = casesData
-        .map((case_) => case_.created_by)
-        .filter((id): id is string => id !== null);
-
-      const { data: profilesData } = await supabase
-        .from("profiles")
-        .select("id, first_name, last_name")
-        .in("id", createdByIds);
-
-      const profilesMap = new Map(
-        profilesData?.map((profile) => [profile.id, profile]) || []
-      );
 
       const formattedCases: Case[] = casesData.map((case_) => ({
         id: case_.id,
@@ -91,10 +80,8 @@ const ActiveCasesPage = () => {
         description: case_.description || "",
         status: case_.status as Case["status"],
         priority: case_.priority as Case["priority"],
-        createdByName: case_.created_by
-          ? `${profilesMap.get(case_.created_by)?.first_name || ""} ${
-              profilesMap.get(case_.created_by)?.last_name || ""
-            }`.trim() || "Unknown"
+        createdByName: case_.creator
+          ? `${case_.creator.first_name || ""} ${case_.creator.last_name || ""}`.trim() || "Unknown"
           : "Unknown",
         createdAt: case_.created_at,
       }));
