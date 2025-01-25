@@ -14,7 +14,8 @@ import { toast } from "sonner";
 
 export function Navigation() {
   const location = useLocation();
-  const { canManageFields } = usePermissions();
+  const { canManageFields, currentUser } = usePermissions();
+  const isDeveloper = currentUser?.role === 'developer';
 
   const handleSignOut = async () => {
     try {
@@ -76,7 +77,7 @@ export function Navigation() {
             </div>
           </Link>
 
-          {canManageFields('officer') && (
+          {isDeveloper && (
             <Link
               to="/settings/custom-fields"
               className={cn(
@@ -86,7 +87,7 @@ export function Navigation() {
             >
               <div className="flex items-center gap-2">
                 <Settings className="h-4 w-4" />
-                <span>Settings</span>
+                <span>Custom Fields</span>
               </div>
             </Link>
           )}
