@@ -25,9 +25,9 @@ export function CustomFieldsManager({ entity }: CustomFieldsManagerProps) {
     handleDeleteField,
   } = useFieldManager(entity);
 
-  console.log('Checking permissions for entity:', entity);
+  console.log('CustomFieldsManager - Entity:', entity);
   const hasPermission = canManageFields(entity);
-  console.log('Has permission to manage fields:', hasPermission);
+  console.log('CustomFieldsManager - Has permission:', hasPermission);
 
   const handleEditingFieldChange = (field: Partial<Field>) => {
     if (editingField) {
@@ -41,6 +41,11 @@ export function CustomFieldsManager({ entity }: CustomFieldsManagerProps) {
 
   const handleSubmit = async () => {
     try {
+      if (!hasPermission) {
+        toast.error('You do not have permission to manage fields');
+        return;
+      }
+
       if (editingField) {
         await handleUpdateField();
         toast.success('Field updated successfully');
@@ -54,19 +59,18 @@ export function CustomFieldsManager({ entity }: CustomFieldsManagerProps) {
     }
   };
 
-  if (!hasPermission) {
-    console.error('Permission denied for entity:', entity);
-    return (
-      <div className="p-6 bg-red-50 border border-red-200 rounded-lg">
-        <p className="text-red-700">You don't have permission to manage fields for this entity.</p>
-      </div>
-    );
-  }
-
   if (isLoading) {
     return (
       <div className="flex items-center justify-center p-8">
         <Loader2 className="h-8 w-8 animate-spin text-gray-500" />
+      </div>
+    );
+  }
+
+  if (!hasPermission) {
+    return (
+      <div className="p-6 bg-red-50 border border-red-200 rounded-lg">
+        <p className="text-red-700">You don't have permission to manage fields for this entity.</p>
       </div>
     );
   }

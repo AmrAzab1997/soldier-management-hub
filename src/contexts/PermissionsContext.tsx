@@ -44,13 +44,24 @@ export function PermissionsProvider({ children }: { children: React.ReactNode })
   const hasPermission = (resource: string, action: string) => {
     if (!currentUser) return false;
     
-    return currentUser.permissions.some(permission => 
+    const userRole = currentUser.role;
+    const permissions = rolePermissions[userRole] || [];
+    
+    return permissions.some(permission => 
       (permission.resource === '*' || permission.resource === resource) &&
       permission.actions.includes(action as any)
     );
   };
 
   const canManageFields = (entity: string) => {
+    console.log('Checking field management permission for entity:', entity);
+    console.log('Current user role:', currentUser?.role);
+    
+    if (currentUser?.role === 'developer') {
+      console.log('User is a developer, granting permission');
+      return true;
+    }
+    
     return hasPermission(entity, 'manage_fields');
   };
 
