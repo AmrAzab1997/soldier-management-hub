@@ -1,4 +1,4 @@
-import { FileText, Home, Users, Bell, Settings, ChevronLeft, ShieldCheck } from "lucide-react";
+import { FileText, Home, Users, Bell, Settings, ChevronLeft, ShieldCheck, LogOut } from "lucide-react";
 import {
   SidebarContent,
   SidebarGroup,
@@ -9,9 +9,12 @@ import {
   SidebarMenuItem,
   SidebarTrigger,
   useSidebar,
+  SidebarFooter,
 } from "./ui/sidebar";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 const menuItems = [
   {
@@ -64,12 +67,24 @@ const menuItems = [
 export function AppSidebar() {
   const location = useLocation();
   const { state } = useSidebar();
+  const navigate = useNavigate();
 
   const isActiveRoute = (path: string) => {
     if (path === "/") {
       return location.pathname === path;
     }
     return location.pathname.startsWith(path);
+  };
+
+  const handleLogout = async () => {
+    try {
+      await supabase.auth.signOut();
+      toast.success("Logged out successfully");
+      navigate("/login");
+    } catch (error) {
+      console.error("Error logging out:", error);
+      toast.error("Failed to log out");
+    }
   };
 
   return (
@@ -127,6 +142,20 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
+      <SidebarFooter className="mt-auto">
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton
+              onClick={handleLogout}
+              tooltip="Logout"
+              className="text-red-500 hover:text-red-600 hover:bg-red-50"
+            >
+              <LogOut className="size-4" />
+              <span>Logout</span>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
+      </SidebarFooter>
     </>
   );
 }
