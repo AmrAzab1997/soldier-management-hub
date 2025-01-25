@@ -13,6 +13,8 @@ import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
 import SoldiersPage from "./pages/Personnel/Soldiers";
 import OfficersPage from "./pages/Personnel/Officers";
+import NewOfficerPage from "./pages/Personnel/Officers/NewOfficer";
+import NewSoldierPage from "./pages/Personnel/Soldiers/NewSoldier";
 import ActiveCasesPage from "./pages/Cases/ActiveCases";
 import NewCasePage from "./pages/Cases/NewCase";
 import AnnouncementsPage from "./pages/Announcements/Announcements";
@@ -92,8 +94,16 @@ const App = () => {
                               element={<SoldiersPage />}
                             />
                             <Route
+                              path="/personnel/soldiers/new"
+                              element={<NewSoldierPage />}
+                            />
+                            <Route
                               path="/personnel/officers"
                               element={<OfficersPage />}
+                            />
+                            <Route
+                              path="/personnel/officers/new"
+                              element={<NewOfficerPage />}
                             />
                             <Route
                               path="/cases/active"
