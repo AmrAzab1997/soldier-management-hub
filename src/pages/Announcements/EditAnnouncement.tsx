@@ -1,0 +1,50 @@
+import { useNavigate, useParams } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
+
+const EditAnnouncement = () => {
+  const { id } = useParams();
+  const navigate = useNavigate();
+
+  const { data: announcement, isLoading } = useQuery({
+    queryKey: ["announcement", id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("announcements")
+        .select("*")
+        .eq("id", id)
+        .single();
+
+      if (error) {
+        toast.error("Error loading announcement");
+        throw error;
+      }
+
+      return data;
+    },
+  });
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <h1 className="text-2xl font-bold">Edit Announcement</h1>
+        <Button variant="outline" onClick={() => navigate("/announcements")}>
+          Back to Announcements
+        </Button>
+      </div>
+      <div className="bg-white p-6 rounded-lg shadow">
+        <p>Announcement ID: {id}</p>
+        <p>Title: {announcement?.title}</p>
+        {/* Add form fields here */}
+      </div>
+    </div>
+  );
+};
+
+export default EditAnnouncement;
