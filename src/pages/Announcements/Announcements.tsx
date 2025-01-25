@@ -6,6 +6,8 @@ import { Edit, Trash2, Plus } from "lucide-react";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -21,44 +23,78 @@ import {
 interface Announcement {
   id: string;
   title: string;
-  category: string;
+  content: string;
   status: "active" | "draft" | "archived";
-  createdAt: string;
-  author: string;
+  priority: string;
+  created_at: string;
 }
-
-const mockAnnouncements: Announcement[] = [
-  {
-    id: "123e4567-e89b-12d3-a456-426614174000",
-    title: "New Security Protocol Implementation",
-    category: "Security",
-    status: "active",
-    createdAt: "2024-02-15",
-    author: "John Smith",
-  },
-  {
-    id: "987fcdeb-51a2-43d8-b4c6-987654321000",
-    title: "Monthly Staff Meeting Update",
-    category: "General",
-    status: "active",
-    createdAt: "2024-02-14",
-    author: "Sarah Johnson",
-  },
-];
 
 export default function AnnouncementsPage() {
   const { toast } = useToast();
   const navigate = useNavigate();
-  const [announcements, setAnnouncements] = useState<Announcement[]>(mockAnnouncements);
+  const queryClient = useQueryClient();
   const [searchTerm, setSearchTerm] = useState("");
 
-  const handleDelete = (id: string) => {
-    setAnnouncements(announcements.filter((announcement) => announcement.id !== id));
-    toast({
-      title: "Announcement Deleted",
-      description: "Announcement has been removed successfully.",
-    });
-  };
+  const { data: announcements, isLoading } = useQuery({
+    queryKey: ["announcements"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("announcements")
+        .select("*")
+        .order("created_at", { ascending: false });
+
+      if (error) {
+        toast({
+          title: "Error loading announcements",
+          description: error.message,
+          variant: "destructive",
+        });
+        throw error;
+      }
+
+      return data as Announcement[];
+    },
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase
+        .from("announcements")
+        .delete()
+        .eq("id", id);
+
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast({
+        title: "Success",
+        description: "Announcement deleted successfully",
+      });
+      queryClient.invalidateQueries({ queryKey: ["announcements"] });
+    },
+    onError: (error) => {
+      toast({
+        title: "Error",
+        description: "Failed to delete announcement",
+        variant: "destructive",
+      });
+      console.error("Delete error:", error);
+    },
+  });
+
+  if (isLoading) {
+    return (
+      <div className="container mx-auto py-6">
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="text-3xl font-bold">Loading...</h1>
+        </div>
+      </div>
+    );
+  }
+
+  const filteredAnnouncements = announcements?.filter((announcement) =>
+    announcement.title.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   return (
     <div className="container mx-auto py-6 space-y-6">
@@ -84,18 +120,29 @@ export default function AnnouncementsPage() {
           <TableHeader>
             <TableRow>
               <TableHead>Title</TableHead>
-              <TableHead>Category</TableHead>
+              <TableHead>Priority</TableHead>
               <TableHead>Status</TableHead>
               <TableHead>Created</TableHead>
-              <TableHead>Author</TableHead>
               <TableHead>Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {announcements.map((announcement) => (
+            {filteredAnnouncements?.map((announcement) => (
               <TableRow key={announcement.id}>
                 <TableCell className="font-medium">{announcement.title}</TableCell>
-                <TableCell>{announcement.category}</TableCell>
+                <TableCell>
+                  <Badge
+                    variant={
+                      announcement.priority === "high"
+                        ? "destructive"
+                        : announcement.priority === "normal"
+                        ? "default"
+                        : "secondary"
+                    }
+                  >
+                    {announcement.priority}
+                  </Badge>
+                </TableCell>
                 <TableCell>
                   <Badge
                     variant={
@@ -110,9 +157,8 @@ export default function AnnouncementsPage() {
                   </Badge>
                 </TableCell>
                 <TableCell>
-                  {new Date(announcement.createdAt).toLocaleDateString()}
+                  {new Date(announcement.created_at).toLocaleDateString()}
                 </TableCell>
-                <TableCell>{announcement.author}</TableCell>
                 <TableCell>
                   <div className="flex items-center gap-2">
                     <Button
@@ -141,7 +187,7 @@ export default function AnnouncementsPage() {
                         <AlertDialogFooter>
                           <AlertDialogCancel>Cancel</AlertDialogCancel>
                           <AlertDialogAction
-                            onClick={() => handleDelete(announcement.id)}
+                            onClick={() => deleteMutation.mutate(announcement.id)}
                           >
                             Delete
                           </AlertDialogAction>
