@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { ShieldCheck } from "lucide-react";
 
-export function Login() {
+const Login = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -50,4 +50,6 @@ export function Login() {
       </div>
     </div>
   );
-}
+};
+
+export default Login;

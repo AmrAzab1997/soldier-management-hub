@@ -1,4 +1,3 @@
-import { createBrowserRouter } from "react-router-dom";
 import { Layout } from "@/components/Layout";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import Index from "@/pages/Index";
