@@ -15,6 +15,7 @@ export default function CustomFieldsPage() {
           <TabsTrigger value="officer">Officer Fields</TabsTrigger>
           <TabsTrigger value="soldier">Soldier Fields</TabsTrigger>
           <TabsTrigger value="case">Case Fields</TabsTrigger>
+          <TabsTrigger value="custom_list">Custom Lists</TabsTrigger>
         </TabsList>
         <TabsContent value="officer" className="mt-6">
           <CustomFieldsManager entity="officer" />
@@ -24,6 +25,9 @@ export default function CustomFieldsPage() {
         </TabsContent>
         <TabsContent value="case" className="mt-6">
           <CustomFieldsManager entity="case" />
+        </TabsContent>
+        <TabsContent value="custom_list" className="mt-6">
+          <CustomFieldsManager entity="custom_list" />
         </TabsContent>
       </Tabs>
     </div>

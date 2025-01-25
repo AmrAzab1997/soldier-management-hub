@@ -18,7 +18,17 @@ export interface Field {
   label: string;
   type: 'text' | 'number' | 'date' | 'email' | 'select' | 'textarea';
   required: boolean;
-  options?: any; // Changed to handle JSON type from database
-  entity: 'officer' | 'soldier' | 'case';
+  options?: any[];
+  entity: 'officer' | 'soldier' | 'case' | 'custom_list';
   isSystem?: boolean;
+}
+
+export interface CustomList {
+  id: string;
+  name: string;
+  description?: string;
+  fields: Field[];
+  isActive: boolean;
+  createdAt: string;
+  createdBy: string;
 }
