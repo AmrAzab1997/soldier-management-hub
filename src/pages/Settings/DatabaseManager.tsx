@@ -67,8 +67,8 @@ export default function DatabaseManager() {
         );
       `;
 
-      const { error: tableError } = await supabase.rpc('execute_sql', { 
-        sql_command: createTableSQL 
+      const { error: tableError } = await supabase.functions.invoke('execute_sql', {
+        body: { sql_command: createTableSQL }
       });
 
       if (tableError) throw tableError;
@@ -94,8 +94,8 @@ export default function DatabaseManager() {
         );
       `;
 
-      const { error: rlsError } = await supabase.rpc('execute_sql', { 
-        sql_command: rlsSQL 
+      const { error: rlsError } = await supabase.functions.invoke('execute_sql', {
+        body: { sql_command: rlsSQL }
       });
 
       if (rlsError) throw rlsError;
