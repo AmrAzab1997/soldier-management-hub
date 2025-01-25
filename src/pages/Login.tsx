@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ShieldCheck } from "lucide-react";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import {
   Form,
   FormControl,
@@ -16,6 +16,7 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
+import { Link } from "react-router-dom";
 
 const formSchema = z.object({
   email: z.string().email("Invalid email address"),
@@ -36,7 +37,6 @@ const Login = () => {
   });
 
   useEffect(() => {
-    // Check if user is already logged in
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session) {
         navigate("/");
@@ -47,19 +47,20 @@ const Login = () => {
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
       setIsLoading(true);
-      const { error } = await supabase.auth.signInWithPassword({
+      const { data, error } = await supabase.auth.signInWithPassword({
         email: values.email,
         password: values.password,
       });
 
       if (error) throw error;
 
-      toast({
-        title: "Success",
-        description: "You have successfully logged in",
-      });
-      
-      navigate("/");
+      if (data.session) {
+        toast({
+          title: "Success",
+          description: "You have successfully logged in",
+        });
+        navigate("/");
+      }
     } catch (error: any) {
       toast({
         variant: "destructive",
@@ -72,14 +73,16 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <div className="max-w-md w-full space-y-8 p-8 bg-white rounded-lg shadow-lg">
-        <div className="text-center">
-          <ShieldCheck className="mx-auto h-12 w-12 text-military-navy" />
-          <h2 className="mt-6 text-3xl font-bold text-gray-900">
-            Military App
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-md w-full space-y-8">
+        <div>
+          <div className="mx-auto h-12 w-12 flex items-center justify-center rounded-full bg-primary/10">
+            <ShieldCheck className="h-6 w-6 text-primary" />
+          </div>
+          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+            Sign in to your account
           </h2>
-          <p className="mt-2 text-sm text-gray-600">
+          <p className="mt-2 text-center text-sm text-gray-600">
             Sign in to access your account
           </p>
         </div>
@@ -92,7 +95,11 @@ const Login = () => {
                 <FormItem>
                   <FormLabel>Email</FormLabel>
                   <FormControl>
-                    <Input placeholder="Enter your email" {...field} />
+                    <Input 
+                      type="email"
+                      placeholder="Enter your email" 
+                      {...field} 
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -124,6 +131,14 @@ const Login = () => {
             </Button>
           </form>
         </Form>
+        <div className="text-center">
+          <Link 
+            to="/register" 
+            className="text-sm text-primary hover:text-primary/80"
+          >
+            Don't have an account? Register here
+          </Link>
+        </div>
       </div>
     </div>
   );
