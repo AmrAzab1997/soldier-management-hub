@@ -27,7 +27,17 @@ const menuItems = [
   {
     title: "Personnel",
     icon: Users,
-    path: "/personnel",
+    path: "/personnel/soldiers",
+    subItems: [
+      {
+        title: "Soldiers",
+        path: "/personnel/soldiers",
+      },
+      {
+        title: "Officers",
+        path: "/personnel/officers",
+      },
+    ],
   },
   {
     title: "Announcements",
@@ -38,6 +48,16 @@ const menuItems = [
     title: "Settings",
     icon: Settings,
     path: "/settings",
+    subItems: [
+      {
+        title: "Custom Fields",
+        path: "/settings/custom-fields",
+      },
+      {
+        title: "Database",
+        path: "/settings/database",
+      },
+    ],
   },
 ];
 
@@ -84,6 +104,23 @@ export function AppSidebar() {
                       <span>{item.title}</span>
                     </Link>
                   </SidebarMenuButton>
+                  {item.subItems && state !== "collapsed" && (
+                    <div className="ml-6 mt-1 space-y-1">
+                      {item.subItems.map((subItem) => (
+                        <SidebarMenuButton
+                          key={subItem.path}
+                          asChild
+                          isActive={isActiveRoute(subItem.path)}
+                          tooltip={subItem.title}
+                          size="sm"
+                        >
+                          <Link to={subItem.path}>
+                            <span>{subItem.title}</span>
+                          </Link>
+                        </SidebarMenuButton>
+                      ))}
+                    </div>
+                  )}
                 </SidebarMenuItem>
               ))}
             </SidebarMenu>

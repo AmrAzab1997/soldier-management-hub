@@ -7,6 +7,12 @@ import CustomFields from "@/pages/Settings/CustomFields";
 import DatabaseManager from "@/pages/Settings/DatabaseManager";
 import ActiveCases from "@/pages/Cases/ActiveCases";
 import NewCase from "@/pages/Cases/NewCase";
+import Soldiers from "@/pages/Personnel/Soldiers";
+import NewSoldier from "@/pages/Personnel/Soldiers/NewSoldier";
+import Officers from "@/pages/Personnel/Officers";
+import NewOfficer from "@/pages/Personnel/Officers/NewOfficer";
+import Announcements from "@/pages/Announcements/Announcements";
+import NewAnnouncement from "@/pages/Announcements/NewAnnouncement";
 
 export const router: RouteObject[] = [
   {
@@ -28,6 +34,50 @@ export const router: RouteObject[] = [
           {
             path: "new",
             element: <NewCase />,
+          },
+        ],
+      },
+      {
+        path: "personnel",
+        children: [
+          {
+            path: "soldiers",
+            children: [
+              {
+                index: true,
+                element: <Soldiers />,
+              },
+              {
+                path: "new",
+                element: <NewSoldier />,
+              },
+            ],
+          },
+          {
+            path: "officers",
+            children: [
+              {
+                index: true,
+                element: <Officers />,
+              },
+              {
+                path: "new",
+                element: <NewOfficer />,
+              },
+            ],
+          },
+        ],
+      },
+      {
+        path: "announcements",
+        children: [
+          {
+            index: true,
+            element: <Announcements />,
+          },
+          {
+            path: "new",
+            element: <NewAnnouncement />,
           },
         ],
       },
