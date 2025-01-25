@@ -2,21 +2,37 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { CreateResourceDialog } from "@/components/CreateResourceDialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 const NewOfficerPage = () => {
   const navigate = useNavigate();
   const [open, setOpen] = useState(true);
+  const [formData, setFormData] = useState({
+    firstName: "",
+    lastName: "",
+    rank: "",
+    badgeNumber: "",
+    department: "",
+  });
 
-  const handleSubmit = async (data: Record<string, string>) => {
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
     try {
       const { error } = await supabase.from("officers").insert([
         {
-          first_name: data.firstName,
-          last_name: data.lastName,
-          rank: data.rank,
-          badge_number: data.badgeNumber,
-          department: data.department,
+          first_name: formData.firstName,
+          last_name: formData.lastName,
+          rank: formData.rank,
+          badge_number: formData.badgeNumber,
+          department: formData.department,
         },
       ]);
 
@@ -30,6 +46,13 @@ const NewOfficerPage = () => {
     }
   };
 
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
+  };
+
   const handleOpenChange = (open: boolean) => {
     setOpen(open);
     if (!open) {
@@ -38,20 +61,74 @@ const NewOfficerPage = () => {
   };
 
   return (
-    <CreateResourceDialog
-      title="Add New Officer"
-      description="Enter the officer's details below."
-      fields={[
-        { name: "firstName", label: "First Name", type: "text", required: true },
-        { name: "lastName", label: "Last Name", type: "text", required: true },
-        { name: "rank", label: "Rank", type: "text", required: true },
-        { name: "badgeNumber", label: "Badge Number", type: "text", required: true },
-        { name: "department", label: "Department", type: "text" },
-      ]}
-      onSubmit={handleSubmit}
-      open={open}
-      onOpenChange={handleOpenChange}
-    />
+    <Dialog open={open} onOpenChange={handleOpenChange}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Add New Officer</DialogTitle>
+        </DialogHeader>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="firstName">First Name</Label>
+            <Input
+              id="firstName"
+              name="firstName"
+              value={formData.firstName}
+              onChange={handleChange}
+              required
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="lastName">Last Name</Label>
+            <Input
+              id="lastName"
+              name="lastName"
+              value={formData.lastName}
+              onChange={handleChange}
+              required
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="rank">Rank</Label>
+            <Input
+              id="rank"
+              name="rank"
+              value={formData.rank}
+              onChange={handleChange}
+              required
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="badgeNumber">Badge Number</Label>
+            <Input
+              id="badgeNumber"
+              name="badgeNumber"
+              value={formData.badgeNumber}
+              onChange={handleChange}
+              required
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="department">Department</Label>
+            <Input
+              id="department"
+              name="department"
+              value={formData.department}
+              onChange={handleChange}
+            />
+          </div>
+          <div className="flex justify-end space-x-2">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => handleOpenChange(false)}
+            >
+              Cancel
+            </Button>
+            <Button type="submit">Create Officer</Button>
+          </div>
+        </form>
+      </DialogContent>
+    </Dialog>
   );
 };
 
