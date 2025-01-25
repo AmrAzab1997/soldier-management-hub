@@ -1,0 +1,41 @@
+import { Field } from '@/types/user';
+import { Button } from '@/components/ui/button';
+
+interface CustomFieldsListProps {
+  fields: Field[];
+  onEdit: (field: Field) => void;
+  onDelete: (fieldId: string) => void;
+}
+
+export function CustomFieldsList({ fields, onEdit, onDelete }: CustomFieldsListProps) {
+  return (
+    <div className="space-y-4">
+      {fields.map((field) => (
+        <div key={field.id} className="flex items-center justify-between p-4 bg-gray-50 rounded">
+          <div>
+            <p className="font-medium">{field.label}</p>
+            <p className="text-sm text-gray-500">
+              Type: {field.type} | Name: {field.name} | Required: {field.required ? 'Yes' : 'No'}
+            </p>
+          </div>
+          <div className="space-x-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => onEdit(field)}
+            >
+              Edit
+            </Button>
+            <Button
+              variant="destructive"
+              size="sm"
+              onClick={() => onDelete(field.id)}
+            >
+              Delete
+            </Button>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
