@@ -1,7 +1,15 @@
 export interface User {
   id: string;
   email: string;
-  role: 'developer' | 'admin' | 'user';
+  role: UserRole;
+  permissions: Permission[];
+}
+
+export type UserRole = 'developer' | 'admin' | 'user';
+
+export interface Permission {
+  resource: string;
+  actions: ('create' | 'read' | 'update' | 'delete' | 'manage_fields')[];
 }
 
 export interface Field {

@@ -1,21 +1,14 @@
-import { createBrowserRouter } from "react-router-dom";
+import { Navigate, RouteObject } from "react-router-dom";
 import { Layout } from "@/components/Layout";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { PermissionsProvider } from "@/contexts/PermissionsContext";
 import { Toaster } from "@/components/ui/toaster";
-
 import Dashboard from "@/pages/Dashboard";
-import Officers from "@/pages/Officers";
-import OfficerDetails from "@/pages/Officers/Details";
-import Soldiers from "@/pages/Soldiers";
-import SoldierDetails from "@/pages/Soldiers/Details";
-import Cases from "@/pages/Cases";
-import CaseDetails from "@/pages/Cases/Details";
 import Settings from "@/pages/Settings";
 import CustomFields from "@/pages/Settings/CustomFields";
 import DatabaseManager from "@/pages/Settings/DatabaseManager";
 
-const routes = [
+const privateRoutes: RouteObject[] = [
   {
     path: "/",
     element: (
@@ -29,45 +22,6 @@ const routes = [
       {
         index: true,
         element: <Dashboard />,
-      },
-      {
-        path: "officers",
-        children: [
-          {
-            index: true,
-            element: <Officers />,
-          },
-          {
-            path: ":id",
-            element: <OfficerDetails />,
-          },
-        ],
-      },
-      {
-        path: "soldiers",
-        children: [
-          {
-            index: true,
-            element: <Soldiers />,
-          },
-          {
-            path: ":id",
-            element: <SoldierDetails />,
-          },
-        ],
-      },
-      {
-        path: "cases",
-        children: [
-          {
-            index: true,
-            element: <Cases />,
-          },
-          {
-            path: ":id",
-            element: <CaseDetails />,
-          },
-        ],
       },
       {
         path: "settings",
@@ -90,4 +44,13 @@ const routes = [
   },
 ];
 
-export const router = createBrowserRouter(routes);
+export const PublicRoutes = ({ user }: { user: any }) => {
+  if (user) return <Navigate to="/" replace />;
+  return <Navigate to="/login" replace />;
+};
+
+export const PrivateRoutes = () => {
+  return <Navigate to="/" replace />;
+};
+
+export const router = privateRoutes;
