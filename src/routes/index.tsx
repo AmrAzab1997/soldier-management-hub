@@ -15,6 +15,8 @@ import Announcements from "@/pages/Announcements/Announcements";
 import NewAnnouncement from "@/pages/Announcements/NewAnnouncement";
 import EditAnnouncement from "@/pages/Announcements/EditAnnouncement";
 import CustomFields from "@/pages/Settings/CustomFields";
+import EditCustomField from "@/pages/Settings/CustomFields/EditCustomField";
+import EditEntityField from "@/pages/Settings/EntityFields/EditEntityField";
 import DatabaseManager from "@/pages/Settings/DatabaseManager";
 import Login from "@/pages/Login";
 import Register from "@/pages/Register";
@@ -114,7 +116,20 @@ export const router = [
       },
       {
         path: "settings/custom-fields",
-        element: <CustomFields />,
+        children: [
+          {
+            index: true,
+            element: <CustomFields />,
+          },
+          {
+            path: "edit/:id",
+            element: <EditCustomField />,
+          },
+          {
+            path: "entity-fields/edit/:id",
+            element: <EditEntityField />,
+          },
+        ],
       },
       {
         path: "settings/database",
