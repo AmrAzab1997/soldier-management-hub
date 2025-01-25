@@ -58,9 +58,10 @@ export function useFieldManager(entity: 'officer' | 'soldier' | 'case') {
         required: field.is_required || false,
         entity: field.entity_type as 'officer' | 'soldier' | 'case',
         isSystem: true,
-        options: [] // System fields don't have options
+        options: []
       }));
 
+      console.log('Mapped system fields:', fields);
       setSystemFields(fields);
     } catch (error) {
       console.error('Error fetching system fields:', error);
@@ -90,9 +91,10 @@ export function useFieldManager(entity: 'officer' | 'soldier' | 'case') {
         type: field.field_type as Field['type'],
         required: field.is_required || false,
         entity: field.entity_type as 'officer' | 'soldier' | 'case',
-        options: Array.isArray(field.options) ? field.options : [] // Ensure options is always an array
+        options: Array.isArray(field.options) ? field.options : []
       }));
 
+      console.log('Mapped custom fields:', fields);
       setCustomFields(fields);
     } catch (error) {
       console.error('Error fetching custom fields:', error);
