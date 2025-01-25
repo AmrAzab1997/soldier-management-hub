@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Case } from "@/types/case";
-import { useToast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 import { CreateResourceDialog } from "@/components/CreateResourceDialog";
 import { CaseTable } from "@/components/Cases/CaseTable";
 import { CaseToolbar } from "@/components/Cases/CaseToolbar";
+import { supabase } from "@/integrations/supabase/client";
 
 const CASE_FILTERS = [
   {
@@ -61,55 +62,101 @@ const ActiveCasesPage = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [filters, setFilters] = useState(CASE_FILTERS);
   const [selectedCase, setSelectedCase] = useState<Case | null>(null);
-  const { toast } = useToast();
+  const [isLoading, setIsLoading] = useState(true);
 
-  const handleCreate = (data: Record<string, string>) => {
-    const newCase: Case = {
-      id: Date.now().toString(),
-      title: data.title,
-      description: data.description,
-      status: data.status as Case["status"],
-      priority: data.priority as Case["priority"],
-      assignedTo: data.assignedTo,
-      createdAt: new Date().toISOString(),
-    };
-    setCases((prev) => [...prev, newCase]);
-    toast({
-      title: "Success",
-      description: "Case created successfully",
-    });
+  useEffect(() => {
+    fetchCases();
+  }, []);
+
+  const fetchCases = async () => {
+    try {
+      const { data, error } = await supabase
+        .from("cases")
+        .select("*")
+        .order("created_at", { ascending: false });
+
+      if (error) throw error;
+
+      const formattedCases: Case[] = data.map((case_) => ({
+        id: case_.id,
+        title: case_.title,
+        description: case_.description || "",
+        status: case_.status as Case["status"],
+        priority: case_.priority as Case["priority"],
+        assignedTo: case_.assigned_to || "",
+        createdAt: case_.created_at,
+      }));
+
+      setCases(formattedCases);
+    } catch (error) {
+      console.error("Error fetching cases:", error);
+      toast.error("Failed to load cases");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const handleUpdate = (data: Record<string, string>) => {
+  const handleCreate = async (data: Record<string, string>) => {
+    try {
+      const { error } = await supabase.from("cases").insert([
+        {
+          title: data.title,
+          description: data.description,
+          status: data.status,
+          priority: data.priority,
+          assigned_to: data.assignedTo,
+          case_number: `CASE-${Date.now()}`,
+        },
+      ]);
+
+      if (error) throw error;
+
+      toast.success("Case created successfully");
+      fetchCases();
+    } catch (error) {
+      console.error("Error creating case:", error);
+      toast.error("Failed to create case");
+    }
+  };
+
+  const handleUpdate = async (data: Record<string, string>) => {
     if (!selectedCase) return;
     
-    setCases((prev) =>
-      prev.map((case_) =>
-        case_.id === selectedCase.id
-          ? {
-              ...case_,
-              title: data.title,
-              description: data.description,
-              status: data.status as Case["status"],
-              priority: data.priority as Case["priority"],
-              assignedTo: data.assignedTo,
-            }
-          : case_
-      )
-    );
-    setSelectedCase(null);
-    toast({
-      title: "Success",
-      description: "Case updated successfully",
-    });
+    try {
+      const { error } = await supabase
+        .from("cases")
+        .update({
+          title: data.title,
+          description: data.description,
+          status: data.status,
+          priority: data.priority,
+          assigned_to: data.assignedTo,
+        })
+        .eq("id", selectedCase.id);
+
+      if (error) throw error;
+
+      toast.success("Case updated successfully");
+      setSelectedCase(null);
+      fetchCases();
+    } catch (error) {
+      console.error("Error updating case:", error);
+      toast.error("Failed to update case");
+    }
   };
 
-  const handleDelete = (id: string) => {
-    setCases((prev) => prev.filter((case_) => case_.id !== id));
-    toast({
-      title: "Success",
-      description: "Case deleted successfully",
-    });
+  const handleDelete = async (id: string) => {
+    try {
+      const { error } = await supabase.from("cases").delete().eq("id", id);
+
+      if (error) throw error;
+
+      toast.success("Case deleted successfully");
+      fetchCases();
+    } catch (error) {
+      console.error("Error deleting case:", error);
+      toast.error("Failed to delete case");
+    }
   };
 
   const handleFilterChange = (groupName: string, optionId: string) => {
@@ -150,6 +197,10 @@ const ActiveCasesPage = () => {
     return matchesSearch && matchesFilters;
   });
 
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <div className="space-y-6">
       <h1 className="text-3xl font-bold text-gray-900">Active Cases</h1>
@@ -182,6 +233,8 @@ const ActiveCasesPage = () => {
             status: selectedCase.status,
             assignedTo: selectedCase.assignedTo,
           }}
+          open={!!selectedCase}
+          onOpenChange={(open) => !open && setSelectedCase(null)}
         />
       )}
     </div>
