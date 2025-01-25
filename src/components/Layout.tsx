@@ -6,7 +6,7 @@ export const Layout = () => {
   return (
     <SidebarProvider>
       <div className="flex min-h-screen w-full bg-background">
-        <Sidebar>
+        <Sidebar className="z-50">
           <AppSidebar />
         </Sidebar>
         <main className="flex-1 overflow-hidden p-6">
