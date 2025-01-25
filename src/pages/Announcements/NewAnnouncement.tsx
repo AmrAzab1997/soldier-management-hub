@@ -4,15 +4,9 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { CreateResourceDialog } from "@/components/CreateResourceDialog";
 
-export default function NewAnnouncement() {
+const NewAnnouncementPage = () => {
   const navigate = useNavigate();
   const [open, setOpen] = useState(true);
-
-  const fields = [
-    { name: "title", label: "Title", type: "text" as const, required: true },
-    { name: "content", label: "Content", type: "textarea" as const, required: true },
-    { name: "priority", label: "Priority", type: "text" as const, required: true },
-  ];
 
   const handleSubmit = async (data: Record<string, string>) => {
     try {
@@ -34,17 +28,32 @@ export default function NewAnnouncement() {
     }
   };
 
+  const handleOpenChange = (open: boolean) => {
+    setOpen(open);
+    if (!open) {
+      navigate("/announcements");
+    }
+  };
+
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold mb-6">Create New Announcement</h1>
-      <CreateResourceDialog
-        title="Create New Announcement"
-        description="Enter the details for the new announcement"
-        fields={fields}
-        onSubmit={handleSubmit}
-        open={open}
-        onOpenChange={setOpen}
-      />
-    </div>
+    <CreateResourceDialog
+      title="Create New Announcement"
+      description="Enter the announcement details below."
+      fields={[
+        { name: "title", label: "Title", type: "text", required: true },
+        { name: "content", label: "Content", type: "textarea", required: true },
+        {
+          name: "priority",
+          label: "Priority",
+          type: "text",
+          required: true,
+        },
+      ]}
+      onSubmit={handleSubmit}
+      open={open}
+      onOpenChange={handleOpenChange}
+    />
   );
-}
+};
+
+export default NewAnnouncementPage;

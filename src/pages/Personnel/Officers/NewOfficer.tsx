@@ -4,26 +4,18 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { CreateResourceDialog } from "@/components/CreateResourceDialog";
 
-export default function NewOfficer() {
+const NewOfficerPage = () => {
   const navigate = useNavigate();
   const [open, setOpen] = useState(true);
-
-  const fields = [
-    { name: "first_name", label: "First Name", type: "text" as const, required: true },
-    { name: "last_name", label: "Last Name", type: "text" as const, required: true },
-    { name: "rank", label: "Rank", type: "text" as const, required: true },
-    { name: "badge_number", label: "Badge Number", type: "text" as const, required: true },
-    { name: "department", label: "Department", type: "text" as const, required: true },
-  ];
 
   const handleSubmit = async (data: Record<string, string>) => {
     try {
       const { error } = await supabase.from("officers").insert([
         {
-          first_name: data.first_name,
-          last_name: data.last_name,
+          first_name: data.firstName,
+          last_name: data.lastName,
           rank: data.rank,
-          badge_number: data.badge_number,
+          badge_number: data.badgeNumber,
           department: data.department,
         },
       ]);
@@ -38,17 +30,29 @@ export default function NewOfficer() {
     }
   };
 
+  const handleOpenChange = (open: boolean) => {
+    setOpen(open);
+    if (!open) {
+      navigate("/personnel/officers");
+    }
+  };
+
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold mb-6">Create New Officer</h1>
-      <CreateResourceDialog
-        title="Create New Officer"
-        description="Enter the details for the new officer"
-        fields={fields}
-        onSubmit={handleSubmit}
-        open={open}
-        onOpenChange={setOpen}
-      />
-    </div>
+    <CreateResourceDialog
+      title="Add New Officer"
+      description="Enter the officer's details below."
+      fields={[
+        { name: "firstName", label: "First Name", type: "text", required: true },
+        { name: "lastName", label: "Last Name", type: "text", required: true },
+        { name: "rank", label: "Rank", type: "text", required: true },
+        { name: "badgeNumber", label: "Badge Number", type: "text", required: true },
+        { name: "department", label: "Department", type: "text" },
+      ]}
+      onSubmit={handleSubmit}
+      open={open}
+      onOpenChange={handleOpenChange}
+    />
   );
-}
+};
+
+export default NewOfficerPage;

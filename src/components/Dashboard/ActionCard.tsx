@@ -64,7 +64,7 @@ export function ActionCard({ userRole, actions }: ActionCardProps) {
       <Button
         variant="outline"
         onClick={() => handleAction(action)}
-        className="p-4 text-sm text-military-navy hover:bg-military-navy/10 rounded-lg transition-colors"
+        className="p-4 text-sm text-military-navy hover:bg-military-navy/10 rounded-lg transition-colors w-full"
       >
         {action}
       </Button>

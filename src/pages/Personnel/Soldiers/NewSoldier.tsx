@@ -4,26 +4,18 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { CreateResourceDialog } from "@/components/CreateResourceDialog";
 
-export default function NewSoldier() {
+const NewSoldierPage = () => {
   const navigate = useNavigate();
   const [open, setOpen] = useState(true);
-
-  const fields = [
-    { name: "first_name", label: "First Name", type: "text" as const, required: true },
-    { name: "last_name", label: "Last Name", type: "text" as const, required: true },
-    { name: "rank", label: "Rank", type: "text" as const, required: true },
-    { name: "service_number", label: "Service Number", type: "text" as const, required: true },
-    { name: "unit", label: "Unit", type: "text" as const, required: true },
-  ];
 
   const handleSubmit = async (data: Record<string, string>) => {
     try {
       const { error } = await supabase.from("soldiers").insert([
         {
-          first_name: data.first_name,
-          last_name: data.last_name,
+          first_name: data.firstName,
+          last_name: data.lastName,
           rank: data.rank,
-          service_number: data.service_number,
+          service_number: data.serviceNumber,
           unit: data.unit,
         },
       ]);
@@ -38,17 +30,29 @@ export default function NewSoldier() {
     }
   };
 
+  const handleOpenChange = (open: boolean) => {
+    setOpen(open);
+    if (!open) {
+      navigate("/personnel/soldiers");
+    }
+  };
+
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold mb-6">Create New Soldier</h1>
-      <CreateResourceDialog
-        title="Create New Soldier"
-        description="Enter the details for the new soldier"
-        fields={fields}
-        onSubmit={handleSubmit}
-        open={open}
-        onOpenChange={setOpen}
-      />
-    </div>
+    <CreateResourceDialog
+      title="Add New Soldier"
+      description="Enter the soldier's details below."
+      fields={[
+        { name: "firstName", label: "First Name", type: "text", required: true },
+        { name: "lastName", label: "Last Name", type: "text", required: true },
+        { name: "rank", label: "Rank", type: "text", required: true },
+        { name: "serviceNumber", label: "Service Number", type: "text", required: true },
+        { name: "unit", label: "Unit", type: "text" },
+      ]}
+      onSubmit={handleSubmit}
+      open={open}
+      onOpenChange={handleOpenChange}
+    />
   );
-}
+};
+
+export default NewSoldierPage;
