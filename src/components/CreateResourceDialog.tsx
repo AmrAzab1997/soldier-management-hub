@@ -27,6 +27,8 @@ interface CreateResourceDialogProps {
   fields: Field[];
   onSubmit: (data: Record<string, string>) => void;
   initialData?: Record<string, string>;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
 }
 
 export function CreateResourceDialog({
@@ -35,14 +37,19 @@ export function CreateResourceDialog({
   fields,
   onSubmit,
   initialData,
+  open: controlledOpen,
+  onOpenChange: controlledOnOpenChange,
 }: CreateResourceDialogProps) {
+  const [internalOpen, setInternalOpen] = useState(false);
   const [formData, setFormData] = useState<Record<string, string>>({});
-  const [open, setOpen] = useState(false);
+
+  const isControlled = controlledOpen !== undefined;
+  const open = isControlled ? controlledOpen : internalOpen;
+  const onOpenChange = isControlled ? controlledOnOpenChange : setInternalOpen;
 
   useEffect(() => {
     if (initialData) {
       setFormData(initialData);
-      setOpen(true);
     }
   }, [initialData]);
 
@@ -50,11 +57,11 @@ export function CreateResourceDialog({
     e.preventDefault();
     onSubmit(formData);
     setFormData({});
-    setOpen(false);
+    onOpenChange?.(false);
   };
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogTrigger asChild>
         {!initialData && (
           <Button>
