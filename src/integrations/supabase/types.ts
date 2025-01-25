@@ -287,6 +287,10 @@ export type Database = {
         }
         Returns: Database["public"]["Enums"]["app_role"]
       }
+      is_developer: {
+        Args: Record<PropertyKey, never>
+        Returns: boolean
+      }
     }
     Enums: {
       app_role: "developer" | "admin" | "user"

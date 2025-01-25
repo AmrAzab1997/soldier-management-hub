@@ -6,7 +6,6 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { usePermissions } from "@/contexts/PermissionsContext";
 
 interface TableField {
   name: string;
@@ -21,7 +20,6 @@ interface TableDefinition {
 }
 
 export default function DatabaseManager() {
-  const { canManageFields } = usePermissions();
   const [tableName, setTableName] = useState('');
   const [description, setDescription] = useState('');
   const [fields, setFields] = useState<TableField[]>([]);
@@ -30,6 +28,26 @@ export default function DatabaseManager() {
     type: 'text',
     required: false
   });
+  const [isDeveloper, setIsDeveloper] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  // Check if user is a developer on component mount
+  useState(() => {
+    checkDeveloperStatus();
+  }, []);
+
+  const checkDeveloperStatus = async () => {
+    try {
+      const { data, error } = await supabase.rpc('is_developer');
+      if (error) throw error;
+      setIsDeveloper(data);
+    } catch (error) {
+      console.error('Error checking developer status:', error);
+      toast.error('Failed to verify permissions');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleAddField = () => {
     if (!newField.name) {
@@ -113,10 +131,24 @@ export default function DatabaseManager() {
     }
   };
 
-  if (!canManageFields('custom_list')) {
+  if (loading) {
     return (
       <div className="p-6">
-        <p className="text-red-500">You don't have permission to manage database tables.</p>
+        <p>Checking permissions...</p>
+      </div>
+    );
+  }
+
+  if (!isDeveloper) {
+    return (
+      <div className="p-6">
+        <div className="flex items-center gap-2 mb-6">
+          <Database className="h-6 w-6" />
+          <h1 className="text-2xl font-bold">Database Manager</h1>
+        </div>
+        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+          <p className="text-red-700">You need developer permissions to access the database manager.</p>
+        </div>
       </div>
     );
   }
