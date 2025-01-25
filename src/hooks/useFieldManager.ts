@@ -3,7 +3,7 @@ import { Field } from '@/types/user';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
-export function useFieldManager(entity: 'officer' | 'soldier' | 'case') {
+export function useFieldManager(entity: 'officer' | 'soldier' | 'case' | 'custom_list') {
   const [systemFields, setSystemFields] = useState<Field[]>([]);
   const [customFields, setCustomFields] = useState<Field[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -56,7 +56,7 @@ export function useFieldManager(entity: 'officer' | 'soldier' | 'case') {
         label: field.field_label,
         type: field.field_type as Field['type'],
         required: field.is_required || false,
-        entity: field.entity_type as 'officer' | 'soldier' | 'case',
+        entity: field.entity_type as Field['entity'],
         isSystem: true,
         options: []
       }));
@@ -90,7 +90,7 @@ export function useFieldManager(entity: 'officer' | 'soldier' | 'case') {
         label: field.field_label,
         type: field.field_type as Field['type'],
         required: field.is_required || false,
-        entity: field.entity_type as 'officer' | 'soldier' | 'case',
+        entity: field.entity_type as Field['entity'],
         options: Array.isArray(field.options) ? field.options : []
       }));
 
