@@ -1,4 +1,4 @@
-import { FileText, Home, Users, Bell, Settings, ChevronLeft } from "lucide-react";
+import { FileText, Home, Users, Bell, Settings, ChevronLeft, ShieldCheck } from "lucide-react";
 import {
   SidebarContent,
   SidebarGroup,
@@ -56,7 +56,7 @@ export function AppSidebar() {
     <>
       <div className="flex items-center justify-between p-4">
         <div className="flex items-center gap-2">
-          <Shield className="h-6 w-6 text-military-navy" />
+          <ShieldCheck className="h-6 w-6 text-military-navy" />
           <span className={cn("font-semibold transition-all", 
             state === "collapsed" && "hidden"
           )}>
