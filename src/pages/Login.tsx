@@ -37,11 +37,14 @@ const Login = () => {
   });
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    const checkSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
       if (session) {
         navigate("/");
       }
-    });
+    };
+    
+    checkSession();
   }, [navigate]);
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
@@ -52,9 +55,29 @@ const Login = () => {
         password: values.password,
       });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Authentication error:', error);
+        throw error;
+      }
 
       if (data.session) {
+        // Check user role after successful login
+        const { data: roleData, error: roleError } = await supabase
+          .from('user_roles')
+          .select('role')
+          .eq('user_id', data.session.user.id)
+          .single();
+
+        if (roleError) {
+          console.error('Error fetching user role:', roleError);
+          toast({
+            variant: "destructive",
+            title: "Error",
+            description: "Failed to fetch user role",
+          });
+          return;
+        }
+
         toast({
           title: "Success",
           description: "You have successfully logged in",
