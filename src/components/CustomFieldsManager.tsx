@@ -130,6 +130,16 @@ export function CustomFieldsManager({ entity }: CustomFieldsManagerProps) {
     }
   };
 
+  const handleEditingFieldChange = (field: Partial<Field>) => {
+    if (editingField) {
+      setEditingField({ ...editingField, ...field });
+    }
+  };
+
+  const handleNewFieldChange = (field: Partial<Field>) => {
+    setNewField({ ...newField, ...field });
+  };
+
   if (!canManageFields(entity)) {
     return null;
   }
@@ -147,14 +157,14 @@ export function CustomFieldsManager({ entity }: CustomFieldsManagerProps) {
           field={editingField}
           onSubmit={handleUpdateField}
           onCancel={() => setEditingField(null)}
-          onChange={setEditingField}
+          onChange={handleEditingFieldChange}
           isEditing
         />
       ) : (
         <CustomFieldForm
           field={newField}
           onSubmit={handleAddField}
-          onChange={setNewField}
+          onChange={handleNewFieldChange}
         />
       )}
 
