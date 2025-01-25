@@ -1,11 +1,8 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CustomFieldsManager } from "@/components/CustomFieldsManager";
 import { Settings } from "lucide-react";
-import { useState } from "react";
 
 export default function CustomFieldsPage() {
-  const [activeTab, setActiveTab] = useState("officer");
-
   return (
     <div className="container mx-auto py-6 space-y-6">
       <div className="flex items-center gap-2 mb-6">
@@ -13,7 +10,7 @@ export default function CustomFieldsPage() {
         <h1 className="text-2xl font-bold">Custom Fields Management</h1>
       </div>
 
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+      <Tabs defaultValue="officer" className="w-full">
         <TabsList className="w-full justify-start">
           <TabsTrigger value="officer">Officer Fields</TabsTrigger>
           <TabsTrigger value="soldier">Soldier Fields</TabsTrigger>
