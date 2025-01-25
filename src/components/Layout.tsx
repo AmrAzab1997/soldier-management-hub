@@ -5,11 +5,11 @@ import { AppSidebar } from "./AppSidebar";
 export const Layout = () => {
   return (
     <SidebarProvider>
-      <div className="flex min-h-screen w-full">
+      <div className="flex min-h-screen w-full bg-background">
         <Sidebar>
           <AppSidebar />
         </Sidebar>
-        <main className="flex-1 p-6">
+        <main className="flex-1 overflow-hidden p-6">
           <Outlet />
         </main>
       </div>

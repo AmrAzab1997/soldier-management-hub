@@ -27,11 +27,7 @@ const App = () => {
                 );
               }
 
-              return (
-                <div className="min-h-screen bg-gray-50">
-                  <RouterProvider router={browserRouter} />
-                </div>
-              );
+              return <RouterProvider router={browserRouter} />;
             }}
           </AuthProvider>
         </TooltipProvider>
