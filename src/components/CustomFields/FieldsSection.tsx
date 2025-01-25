@@ -29,22 +29,12 @@ export function FieldsSection({
   onChange,
   showForm = false,
 }: FieldsSectionProps) {
-  console.log('Rendering FieldsSection:', { 
-    title, 
-    fields, 
-    isSystemFields,
-    editingField,
-    newField,
-    showForm,
-    fieldsLength: fields?.length 
-  });
-
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       <h4 className="text-lg font-semibold">{title}</h4>
       
       {showForm && !isSystemFields && (
-        <div className="mb-6">
+        <div className="mb-4">
           <CustomFieldForm
             field={editingField || newField!}
             onSubmit={onSubmit!}
@@ -55,12 +45,14 @@ export function FieldsSection({
         </div>
       )}
 
-      <CustomFieldsList
-        fields={fields}
-        onEdit={onEdit!}
-        onDelete={onDelete!}
-        isSystemFields={isSystemFields}
-      />
+      <div className="mt-4">
+        <CustomFieldsList
+          fields={fields}
+          onEdit={onEdit!}
+          onDelete={onDelete!}
+          isSystemFields={isSystemFields}
+        />
+      </div>
     </div>
   );
 }

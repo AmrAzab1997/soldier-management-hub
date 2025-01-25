@@ -22,17 +22,6 @@ export function CustomFieldsManager({ entity }: CustomFieldsManagerProps) {
     handleDeleteField,
   } = useFieldManager(entity);
 
-  console.log('CustomFieldsManager render:', { 
-    entity, 
-    systemFields, 
-    customFields, 
-    isLoading,
-    editingField,
-    newField,
-    systemFieldsLength: systemFields?.length,
-    customFieldsLength: customFields?.length
-  });
-
   const handleEditingFieldChange = (field: Partial<Field>) => {
     if (editingField) {
       setEditingField({ ...editingField, ...field });
@@ -59,26 +48,30 @@ export function CustomFieldsManager({ entity }: CustomFieldsManagerProps) {
     <div className="space-y-8 p-6 bg-white rounded-lg shadow">
       <h3 className="text-xl font-semibold">Manage Fields for {entity}</h3>
       
-      <FieldsSection
-        title="System Fields"
-        fields={systemFields || []}
-        isSystemFields={true}
-        onEdit={() => {}}
-        onDelete={() => {}}
-      />
+      <div className="mb-8">
+        <FieldsSection
+          title="System Fields"
+          fields={systemFields || []}
+          isSystemFields={true}
+          onEdit={() => {}}
+          onDelete={() => {}}
+        />
+      </div>
 
-      <FieldsSection
-        title="Custom Fields"
-        fields={customFields || []}
-        onEdit={setEditingField}
-        onDelete={handleDeleteField}
-        editingField={editingField}
-        newField={newField}
-        onSubmit={editingField ? handleUpdateField : handleAddField}
-        onCancel={editingField ? () => setEditingField(null) : undefined}
-        onChange={editingField ? handleEditingFieldChange : handleNewFieldChange}
-        showForm={true}
-      />
+      <div>
+        <FieldsSection
+          title="Custom Fields"
+          fields={customFields || []}
+          onEdit={setEditingField}
+          onDelete={handleDeleteField}
+          editingField={editingField}
+          newField={newField}
+          onSubmit={editingField ? handleUpdateField : handleAddField}
+          onCancel={editingField ? () => setEditingField(null) : undefined}
+          onChange={editingField ? handleEditingFieldChange : handleNewFieldChange}
+          showForm={true}
+        />
+      </div>
     </div>
   );
 }

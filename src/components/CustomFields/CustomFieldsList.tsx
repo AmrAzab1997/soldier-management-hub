@@ -9,22 +9,18 @@ interface CustomFieldsListProps {
 }
 
 export function CustomFieldsList({ fields, onEdit, onDelete, isSystemFields = false }: CustomFieldsListProps) {
-  console.log('Rendering CustomFieldsList:', { 
-    fields, 
-    isSystemFields,
-    fieldsLength: fields?.length 
-  });
-
-  if (!fields || fields.length === 0) {
+  if (!Array.isArray(fields) || fields.length === 0) {
     return (
-      <p className="text-gray-500 italic text-center py-4">
-        No {isSystemFields ? 'system' : 'custom'} fields found.
-      </p>
+      <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
+        <p className="text-gray-500 italic text-center">
+          No {isSystemFields ? 'system' : 'custom'} fields available
+        </p>
+      </div>
     );
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-3">
       {fields.map((field) => (
         <div 
           key={field.id} 
