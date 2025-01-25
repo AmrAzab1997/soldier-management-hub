@@ -98,6 +98,8 @@ export default function SoldiersPage() {
   };
 
   const handleEdit = (soldier: Soldier) => {
+    // Convert Soldier to Record<string, string> by omitting the id field
+    const { id, ...soldierData } = soldier;
     setEditingSoldier(soldier);
   };
 
@@ -200,7 +202,12 @@ export default function SoldiersPage() {
           description="Update the soldier's details."
           fields={SOLDIER_FIELDS}
           onSubmit={handleUpdate}
-          initialData={editingSoldier}
+          initialData={{
+            name: editingSoldier.name,
+            rank: editingSoldier.rank,
+            unit: editingSoldier.unit,
+            status: editingSoldier.status,
+          }}
         />
       )}
     </div>
