@@ -13,11 +13,17 @@ import NewAnnouncement from "@/pages/Announcements/NewAnnouncement";
 import CustomFields from "@/pages/Settings/CustomFields";
 import DatabaseManager from "@/pages/Settings/DatabaseManager";
 import Login from "@/pages/Login";
+import Register from "@/pages/Register";
 
 export const router = [
   {
     path: "/login",
     element: <Login />,
+    errorElement: <ErrorBoundary />,
+  },
+  {
+    path: "/register",
+    element: <Register />,
     errorElement: <ErrorBoundary />,
   },
   {
