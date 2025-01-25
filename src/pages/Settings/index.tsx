@@ -1,12 +1,12 @@
-import { Settings, Database, ListPlus } from "lucide-react";
+import { Settings as SettingsIcon, Database, ListPlus } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 
-const Settings = () => {
+const SettingsPage = () => {
   return (
     <div className="container mx-auto py-6 space-y-6">
       <div className="flex items-center gap-2 mb-6">
-        <Settings className="h-6 w-6" />
+        <SettingsIcon className="h-6 w-6" />
         <h1 className="text-2xl font-bold">Settings</h1>
       </div>
 
@@ -45,4 +45,4 @@ const Settings = () => {
   );
 };
 
-export default Settings;
+export default SettingsPage;
