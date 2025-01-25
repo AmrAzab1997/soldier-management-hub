@@ -2,13 +2,12 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { RouterProvider } from "react-router-dom";
 import { PermissionsProvider } from "@/contexts/PermissionsContext";
 import { AuthProvider } from "@/components/AuthProvider";
 import { router } from "@/routes";
 
 const queryClient = new QueryClient();
-const browserRouter = createBrowserRouter(router);
 
 const App = () => {
   return (
@@ -29,7 +28,7 @@ const App = () => {
 
               return (
                 <div className="min-h-screen bg-gray-50">
-                  <RouterProvider router={browserRouter} />
+                  <RouterProvider router={router} />
                 </div>
               );
             }}
