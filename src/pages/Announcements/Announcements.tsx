@@ -4,7 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Edit, Trash2, Plus } from "lucide-react";
 import { useState } from "react";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 import {
   AlertDialog,
@@ -29,7 +29,7 @@ interface Announcement {
 
 const mockAnnouncements: Announcement[] = [
   {
-    id: "1",
+    id: "123e4567-e89b-12d3-a456-426614174000",
     title: "New Security Protocol Implementation",
     category: "Security",
     status: "active",
@@ -37,7 +37,7 @@ const mockAnnouncements: Announcement[] = [
     author: "John Smith",
   },
   {
-    id: "2",
+    id: "987fcdeb-51a2-43d8-b4c6-987654321000",
     title: "Monthly Staff Meeting Update",
     category: "General",
     status: "active",
