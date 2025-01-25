@@ -1,4 +1,4 @@
-import { Home, FileText, Users, Bell, Settings } from "lucide-react";
+import { FileText, Home, Users, Bell, Settings } from "lucide-react";
 import {
   SidebarContent,
   SidebarGroup,
@@ -41,6 +41,13 @@ const menuItems = [
 export function AppSidebar() {
   const location = useLocation();
 
+  const isActiveRoute = (path: string) => {
+    if (path === "/") {
+      return location.pathname === path;
+    }
+    return location.pathname.startsWith(path);
+  };
+
   return (
     <SidebarContent>
       <SidebarGroup>
@@ -51,7 +58,7 @@ export function AppSidebar() {
               <SidebarMenuItem key={item.path}>
                 <SidebarMenuButton
                   asChild
-                  isActive={location.pathname === item.path}
+                  isActive={isActiveRoute(item.path)}
                   tooltip={item.title}
                 >
                   <Link to={item.path}>

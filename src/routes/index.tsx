@@ -1,12 +1,14 @@
-import { Navigate, RouteObject } from "react-router-dom";
+import { RouteObject } from "react-router-dom";
 import { Layout } from "@/components/Layout";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import Dashboard from "@/pages/Dashboard";
 import Settings from "@/pages/Settings";
 import CustomFields from "@/pages/Settings/CustomFields";
 import DatabaseManager from "@/pages/Settings/DatabaseManager";
+import ActiveCases from "@/pages/Cases/ActiveCases";
+import NewCase from "@/pages/Cases/NewCase";
 
-const privateRoutes: RouteObject[] = [
+export const router: RouteObject[] = [
   {
     path: "/",
     element: <Layout />,
@@ -15,6 +17,19 @@ const privateRoutes: RouteObject[] = [
       {
         index: true,
         element: <Dashboard />,
+      },
+      {
+        path: "cases",
+        children: [
+          {
+            index: true,
+            element: <ActiveCases />,
+          },
+          {
+            path: "new",
+            element: <NewCase />,
+          },
+        ],
       },
       {
         path: "settings",
@@ -36,5 +51,3 @@ const privateRoutes: RouteObject[] = [
     ],
   },
 ];
-
-export const router = privateRoutes;
