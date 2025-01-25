@@ -68,7 +68,10 @@ const ActiveCasesPage = () => {
         .from("cases")
         .select(`
           *,
-          creator:profiles(first_name, last_name)
+          profiles!cases_created_by_fkey (
+            first_name,
+            last_name
+          )
         `)
         .order("created_at", { ascending: false });
 
@@ -80,8 +83,8 @@ const ActiveCasesPage = () => {
         description: case_.description || "",
         status: case_.status as Case["status"],
         priority: case_.priority as Case["priority"],
-        createdByName: case_.creator
-          ? `${case_.creator.first_name || ""} ${case_.creator.last_name || ""}`.trim() || "Unknown"
+        createdByName: case_.profiles
+          ? `${case_.profiles.first_name || ""} ${case_.profiles.last_name || ""}`.trim() || "Unknown"
           : "Unknown",
         createdAt: case_.created_at,
       }));
