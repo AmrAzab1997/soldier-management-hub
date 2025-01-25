@@ -68,12 +68,11 @@ const ActiveCasesPage = () => {
         .from("cases")
         .select(`
           *,
-          profiles (
+          profiles!cases_created_by_fkey (
             first_name,
             last_name
           )
         `)
-        .eq('profiles.id', 'created_by')
         .order("created_at", { ascending: false });
 
       if (error) throw error;
