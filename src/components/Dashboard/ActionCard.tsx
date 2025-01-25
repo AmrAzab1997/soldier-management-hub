@@ -47,6 +47,11 @@ export function ActionCard({ userRole, actions }: ActionCardProps) {
     }
   };
 
+  const handleEntityChange = (entity: 'officer' | 'soldier' | 'case') => {
+    setSelectedEntity(entity);
+    toast.success(`Switched to ${entity} custom fields`);
+  };
+
   const renderButton = (action: string) => {
     if (action === "Add Personnel") {
       return (
@@ -123,19 +128,22 @@ export function ActionCard({ userRole, actions }: ActionCardProps) {
                   <div className="flex gap-4">
                     <Button
                       variant={selectedEntity === 'officer' ? 'default' : 'outline'}
-                      onClick={() => setSelectedEntity('officer')}
+                      onClick={() => handleEntityChange('officer')}
+                      className="flex-1"
                     >
                       Officers
                     </Button>
                     <Button
                       variant={selectedEntity === 'soldier' ? 'default' : 'outline'}
-                      onClick={() => setSelectedEntity('soldier')}
+                      onClick={() => handleEntityChange('soldier')}
+                      className="flex-1"
                     >
                       Soldiers
                     </Button>
                     <Button
                       variant={selectedEntity === 'case' ? 'default' : 'outline'}
-                      onClick={() => setSelectedEntity('case')}
+                      onClick={() => handleEntityChange('case')}
+                      className="flex-1"
                     >
                       Cases
                     </Button>
