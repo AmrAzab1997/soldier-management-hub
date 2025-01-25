@@ -1,12 +1,14 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { toast } from "sonner";
+import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { CreateResourceDialog } from "@/components/CreateResourceDialog";
+import { useQueryClient } from "@tanstack/react-query";
 
 const NewAnnouncementPage = () => {
   const navigate = useNavigate();
   const [open, setOpen] = useState(true);
+  const queryClient = useQueryClient();
 
   const handleSubmit = async (data: Record<string, string>) => {
     try {
@@ -20,11 +22,21 @@ const NewAnnouncementPage = () => {
 
       if (error) throw error;
 
-      toast.success("Announcement created successfully");
+      // Invalidate and refetch announcements
+      queryClient.invalidateQueries({ queryKey: ["announcements"] });
+      
+      toast({
+        title: "Success",
+        description: "Announcement created successfully",
+      });
       navigate("/announcements");
     } catch (error) {
       console.error("Error creating announcement:", error);
-      toast.error("Failed to create announcement");
+      toast({
+        title: "Error",
+        description: "Failed to create announcement",
+        variant: "destructive",
+      });
     }
   };
 
@@ -45,8 +57,13 @@ const NewAnnouncementPage = () => {
         {
           name: "priority",
           label: "Priority",
-          type: "text",
+          type: "select",
           required: true,
+          options: [
+            { value: "low", label: "Low" },
+            { value: "normal", label: "Normal" },
+            { value: "high", label: "High" },
+          ],
         },
       ]}
       onSubmit={handleSubmit}
