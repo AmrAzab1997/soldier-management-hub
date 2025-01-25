@@ -22,6 +22,13 @@ export function CustomFieldsManager({ entity }: CustomFieldsManagerProps) {
     handleDeleteField,
   } = useFieldManager(entity);
 
+  console.log('CustomFieldsManager render:', { 
+    entity, 
+    systemFields, 
+    customFields, 
+    isLoading 
+  });
+
   const handleEditingFieldChange = (field: Partial<Field>) => {
     if (editingField) {
       setEditingField({ ...editingField, ...field });
@@ -37,12 +44,16 @@ export function CustomFieldsManager({ entity }: CustomFieldsManagerProps) {
   }
 
   if (isLoading) {
-    return <div>Loading fields...</div>;
+    return (
+      <div className="flex items-center justify-center p-8">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
+      </div>
+    );
   }
 
   return (
-    <div className="space-y-6 p-4 bg-white rounded-lg shadow">
-      <h3 className="text-lg font-semibold">Manage Fields for {entity}</h3>
+    <div className="space-y-8 p-6 bg-white rounded-lg shadow">
+      <h3 className="text-xl font-semibold">Manage Fields for {entity}</h3>
       
       <FieldsSection
         title="System Fields"

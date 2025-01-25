@@ -29,28 +29,30 @@ export function FieldsSection({
   onChange,
   showForm = false,
 }: FieldsSectionProps) {
+  console.log('Rendering FieldsSection:', { title, fields, isSystemFields });
+  
   return (
-    <div className="mt-8">
-      <h4 className="text-md font-medium mb-4">{title}</h4>
+    <div className="space-y-6">
+      <h4 className="text-lg font-semibold">{title}</h4>
       
-      {showForm && (
-        <CustomFieldForm
-          field={editingField || newField!}
-          onSubmit={onSubmit!}
-          onCancel={onCancel}
-          onChange={onChange!}
-          isEditing={!!editingField}
-        />
+      {showForm && !isSystemFields && (
+        <div className="mb-6">
+          <CustomFieldForm
+            field={editingField || newField!}
+            onSubmit={onSubmit!}
+            onCancel={onCancel}
+            onChange={onChange!}
+            isEditing={!!editingField}
+          />
+        </div>
       )}
 
-      <div className="mt-4">
-        <CustomFieldsList
-          fields={fields}
-          onEdit={onEdit!}
-          onDelete={onDelete!}
-          isSystemFields={isSystemFields}
-        />
-      </div>
+      <CustomFieldsList
+        fields={fields}
+        onEdit={onEdit!}
+        onDelete={onDelete!}
+        isSystemFields={isSystemFields}
+      />
     </div>
   );
 }

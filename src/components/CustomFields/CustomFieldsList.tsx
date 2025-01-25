@@ -9,9 +9,11 @@ interface CustomFieldsListProps {
 }
 
 export function CustomFieldsList({ fields, onEdit, onDelete, isSystemFields = false }: CustomFieldsListProps) {
+  console.log('Rendering CustomFieldsList with fields:', fields);
+  
   return (
     <div className="space-y-4">
-      {fields.map((field) => (
+      {fields && fields.map((field) => (
         <div key={field.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-200">
           <div>
             <p className="font-medium">{field.label}</p>
@@ -39,7 +41,7 @@ export function CustomFieldsList({ fields, onEdit, onDelete, isSystemFields = fa
           )}
         </div>
       ))}
-      {fields.length === 0 && (
+      {(!fields || fields.length === 0) && (
         <p className="text-gray-500 italic text-center py-4">
           No {isSystemFields ? 'system' : 'custom'} fields found.
         </p>
