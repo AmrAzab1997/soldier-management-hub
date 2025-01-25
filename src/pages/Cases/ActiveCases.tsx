@@ -49,12 +49,6 @@ const CASE_FIELDS = [
     type: "text" as const,
     required: true,
   },
-  {
-    name: "assignedTo",
-    label: "Assigned To",
-    type: "text" as const,
-    required: true,
-  },
 ];
 
 const ActiveCasesPage = () => {
@@ -98,13 +92,16 @@ const ActiveCasesPage = () => {
 
   const handleCreate = async (data: Record<string, string>) => {
     try {
+      // Get the current user's ID for assignment
+      const { data: { user } } = await supabase.auth.getUser();
+      
       const { error } = await supabase.from("cases").insert([
         {
           title: data.title,
           description: data.description,
           status: data.status,
           priority: data.priority,
-          assigned_to: data.assignedTo,
+          assigned_to: user?.id, // Use the current user's ID instead of a string
           case_number: `CASE-${Date.now()}`,
         },
       ]);
@@ -130,7 +127,7 @@ const ActiveCasesPage = () => {
           description: data.description,
           status: data.status,
           priority: data.priority,
-          assigned_to: data.assignedTo,
+          // Keep the existing assigned_to value
         })
         .eq("id", selectedCase.id);
 
