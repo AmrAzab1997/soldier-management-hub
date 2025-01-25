@@ -9,18 +9,20 @@ interface CustomFieldsListProps {
 }
 
 export function CustomFieldsList({ fields, onEdit, onDelete, isSystemFields = false }: CustomFieldsListProps) {
-  console.log('Rendering CustomFieldsList with fields:', fields);
-  
-  if (!Array.isArray(fields)) {
-    console.error('Fields is not an array:', fields);
-    return null;
-  }
+  console.log('Rendering CustomFieldsList:', { 
+    fields, 
+    isSystemFields,
+    fieldsLength: fields?.length 
+  });
 
   return (
     <div className="space-y-4">
-      {fields.length > 0 ? (
+      {fields && fields.length > 0 ? (
         fields.map((field) => (
-          <div key={field.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-200">
+          <div 
+            key={field.id} 
+            className="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-200"
+          >
             <div>
               <p className="font-medium">{field.label}</p>
               <p className="text-sm text-gray-500">

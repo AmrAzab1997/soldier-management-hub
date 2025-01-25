@@ -26,7 +26,9 @@ export function CustomFieldsManager({ entity }: CustomFieldsManagerProps) {
     entity, 
     systemFields, 
     customFields, 
-    isLoading 
+    isLoading,
+    editingField,
+    newField 
   });
 
   const handleEditingFieldChange = (field: Partial<Field>) => {
@@ -55,17 +57,19 @@ export function CustomFieldsManager({ entity }: CustomFieldsManagerProps) {
     <div className="space-y-8 p-6 bg-white rounded-lg shadow">
       <h3 className="text-xl font-semibold">Manage Fields for {entity}</h3>
       
-      <FieldsSection
-        title="System Fields"
-        fields={systemFields}
-        isSystemFields={true}
-        onEdit={() => {}}
-        onDelete={() => {}}
-      />
+      {systemFields && systemFields.length > 0 && (
+        <FieldsSection
+          title="System Fields"
+          fields={systemFields}
+          isSystemFields={true}
+          onEdit={() => {}}
+          onDelete={() => {}}
+        />
+      )}
 
       <FieldsSection
         title="Custom Fields"
-        fields={customFields}
+        fields={customFields || []}
         onEdit={setEditingField}
         onDelete={handleDeleteField}
         editingField={editingField}

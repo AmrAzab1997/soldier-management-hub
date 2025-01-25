@@ -29,12 +29,14 @@ export function FieldsSection({
   onChange,
   showForm = false,
 }: FieldsSectionProps) {
-  console.log('Rendering FieldsSection:', { title, fields, isSystemFields });
-  
-  if (!Array.isArray(fields)) {
-    console.error('Fields is not an array:', fields);
-    return null;
-  }
+  console.log('Rendering FieldsSection:', { 
+    title, 
+    fields, 
+    isSystemFields,
+    editingField,
+    newField,
+    showForm 
+  });
 
   return (
     <div className="space-y-6">
