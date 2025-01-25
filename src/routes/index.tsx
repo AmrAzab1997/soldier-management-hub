@@ -1,57 +1,93 @@
-import { Routes, Route, Navigate } from "react-router-dom";
-import { Navigation } from "@/components/ui/navigation";
-import Login from "@/pages/Login";
-import Register from "@/pages/Register";
+import { createBrowserRouter } from "react-router-dom";
+import { Layout } from "@/components/Layout";
+import { ErrorBoundary } from "@/components/ErrorBoundary";
+import { PermissionsProvider } from "@/contexts/PermissionsContext";
+import { Toaster } from "@/components/ui/toaster";
+
 import Dashboard from "@/pages/Dashboard";
-import SoldiersPage from "@/pages/Personnel/Soldiers";
-import OfficersPage from "@/pages/Personnel/Officers";
-import NewOfficerPage from "@/pages/Personnel/Officers/NewOfficer";
-import NewSoldierPage from "@/pages/Personnel/Soldiers/NewSoldier";
-import ActiveCasesPage from "@/pages/Cases/ActiveCases";
-import NewCasePage from "@/pages/Cases/NewCase";
-import AnnouncementsPage from "@/pages/Announcements/Announcements";
-import NewAnnouncementPage from "@/pages/Announcements/NewAnnouncement";
-import CustomFieldsPage from "@/pages/Settings/CustomFields";
-import { User } from "@supabase/supabase-js";
+import Officers from "@/pages/Officers";
+import OfficerDetails from "@/pages/Officers/Details";
+import Soldiers from "@/pages/Soldiers";
+import SoldierDetails from "@/pages/Soldiers/Details";
+import Cases from "@/pages/Cases";
+import CaseDetails from "@/pages/Cases/Details";
+import Settings from "@/pages/Settings";
+import CustomFields from "@/pages/Settings/CustomFields";
+import DatabaseManager from "@/pages/Settings/DatabaseManager";
 
-interface AppRoutesProps {
-  user: User | null;
-}
+const routes = [
+  {
+    path: "/",
+    element: (
+      <PermissionsProvider>
+        <Layout />
+        <Toaster />
+      </PermissionsProvider>
+    ),
+    errorElement: <ErrorBoundary />,
+    children: [
+      {
+        index: true,
+        element: <Dashboard />,
+      },
+      {
+        path: "officers",
+        children: [
+          {
+            index: true,
+            element: <Officers />,
+          },
+          {
+            path: ":id",
+            element: <OfficerDetails />,
+          },
+        ],
+      },
+      {
+        path: "soldiers",
+        children: [
+          {
+            index: true,
+            element: <Soldiers />,
+          },
+          {
+            path: ":id",
+            element: <SoldierDetails />,
+          },
+        ],
+      },
+      {
+        path: "cases",
+        children: [
+          {
+            index: true,
+            element: <Cases />,
+          },
+          {
+            path: ":id",
+            element: <CaseDetails />,
+          },
+        ],
+      },
+      {
+        path: "settings",
+        children: [
+          {
+            index: true,
+            element: <Settings />,
+          },
+          {
+            path: "custom-fields",
+            element: <CustomFields />,
+          },
+          {
+            path: "database",
+            element: <DatabaseManager />,
+          },
+        ],
+      },
+    ],
+  },
+];
 
-export const PublicRoutes = ({ user }: AppRoutesProps) => {
-  return (
-    <Routes>
-      <Route
-        path="/"
-        element={user ? <Navigate to="/dashboard" replace /> : <Login />}
-      />
-      <Route
-        path="/register"
-        element={user ? <Navigate to="/dashboard" replace /> : <Register />}
-      />
-      <Route path="*" element={<Navigate to="/" replace />} />
-    </Routes>
-  );
-};
-
-export const PrivateRoutes = () => {
-  return (
-    <>
-      <Navigation />
-      <div className="pt-16">
-        <Routes>
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/personnel/soldiers" element={<SoldiersPage />} />
-          <Route path="/personnel/soldiers/new" element={<NewSoldierPage />} />
-          <Route path="/personnel/officers" element={<OfficersPage />} />
-          <Route path="/personnel/officers/new" element={<NewOfficerPage />} />
-          <Route path="/cases/active" element={<ActiveCasesPage />} />
-          <Route path="/cases/new" element={<NewCasePage />} />
-          <Route path="/announcements" element={<AnnouncementsPage />} />
-          <Route path="/announcements/new" element={<NewAnnouncementPage />} />
-          <Route path="/settings/custom-fields" element={<CustomFieldsPage />} />
-        </Routes>
-      </div>
-    </>
-  );
-};
+export const router = createBrowserRouter(routes);
