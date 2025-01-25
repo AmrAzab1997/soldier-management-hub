@@ -1,21 +1,21 @@
 import { createBrowserRouter } from "react-router-dom";
 import { Layout } from "@/components/Layout";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
-import { Index } from "@/pages/Index";
-import { Dashboard } from "@/pages/Dashboard";
-import { ActiveCases } from "@/pages/Cases/ActiveCases";
-import { NewCase } from "@/pages/Cases/NewCase";
-import { Soldiers } from "@/pages/Personnel/Soldiers";
-import { NewSoldier } from "@/pages/Personnel/Soldiers/NewSoldier";
-import { Officers } from "@/pages/Personnel/Officers";
-import { NewOfficer } from "@/pages/Personnel/Officers/NewOfficer";
-import { Announcements } from "@/pages/Announcements/Announcements";
-import { NewAnnouncement } from "@/pages/Announcements/NewAnnouncement";
-import { CustomFields } from "@/pages/Settings/CustomFields";
-import { DatabaseManager } from "@/pages/Settings/DatabaseManager";
-import { Login } from "@/pages/Login";
+import Index from "@/pages/Index";
+import Dashboard from "@/pages/Dashboard";
+import ActiveCases from "@/pages/Cases/ActiveCases";
+import NewCase from "@/pages/Cases/NewCase";
+import Soldiers from "@/pages/Personnel/Soldiers";
+import NewSoldier from "@/pages/Personnel/Soldiers/NewSoldier";
+import Officers from "@/pages/Personnel/Officers";
+import NewOfficer from "@/pages/Personnel/Officers/NewOfficer";
+import Announcements from "@/pages/Announcements/Announcements";
+import NewAnnouncement from "@/pages/Announcements/NewAnnouncement";
+import CustomFields from "@/pages/Settings/CustomFields";
+import DatabaseManager from "@/pages/Settings/DatabaseManager";
+import Login from "@/pages/Login";
 
-export const router = createBrowserRouter([
+export const router = [
   {
     path: "/login",
     element: <Login />,
@@ -96,4 +96,4 @@ export const router = createBrowserRouter([
       },
     ],
   },
-]);
+];
