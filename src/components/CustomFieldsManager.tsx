@@ -24,7 +24,17 @@ export function CustomFieldsManager({ entity }: CustomFieldsManagerProps) {
   });
 
   useEffect(() => {
+    setIsLoading(true);
     fetchCustomFields();
+    // Reset form state when entity changes
+    setEditingField(null);
+    setNewField({
+      name: '',
+      label: '',
+      type: 'text',
+      required: false,
+      entity,
+    });
   }, [entity]);
 
   const fetchCustomFields = async () => {
