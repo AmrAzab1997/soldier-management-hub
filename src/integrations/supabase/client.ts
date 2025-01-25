@@ -12,7 +12,7 @@ export const supabase = createClient<Database>(
       persistSession: true,
       autoRefreshToken: true,
       detectSessionInUrl: true,
-      storageKey: 'supabase.auth.token'
+      storageKey: 'supabase.auth.token',
     }
   }
 );
