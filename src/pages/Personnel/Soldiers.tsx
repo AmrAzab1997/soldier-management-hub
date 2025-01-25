@@ -30,7 +30,6 @@ const INITIAL_DATA: Soldier[] = [
     unit: "1st Infantry",
     status: "Active",
   },
-  // Add more sample data as needed
 ];
 
 const SOLDIER_FILTERS = [
@@ -61,6 +60,7 @@ export default function SoldiersPage() {
   const [soldiers, setSoldiers] = useState<Soldier[]>(INITIAL_DATA);
   const [searchTerm, setSearchTerm] = useState("");
   const [filters, setFilters] = useState(SOLDIER_FILTERS);
+  const [editingSoldier, setEditingSoldier] = useState<Soldier | null>(null);
 
   const handleSearch = (value: string) => {
     setSearchTerm(value);
@@ -95,6 +95,22 @@ export default function SoldiersPage() {
     };
     setSoldiers((prev) => [...prev, newSoldier]);
     toast.success("Soldier added successfully");
+  };
+
+  const handleEdit = (soldier: Soldier) => {
+    setEditingSoldier(soldier);
+  };
+
+  const handleUpdate = (data: Record<string, string>) => {
+    setSoldiers((prev) =>
+      prev.map((soldier) =>
+        soldier.id === editingSoldier?.id
+          ? { ...soldier, ...data }
+          : soldier
+      )
+    );
+    setEditingSoldier(null);
+    toast.success("Soldier updated successfully");
   };
 
   const handleDelete = (id: string) => {
@@ -158,7 +174,11 @@ export default function SoldiersPage() {
               <TableCell>{soldier.unit}</TableCell>
               <TableCell>{soldier.status}</TableCell>
               <TableCell className="text-right space-x-2">
-                <Button variant="ghost" size="icon">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => handleEdit(soldier)}
+                >
                   <Edit2 className="h-4 w-4" />
                 </Button>
                 <Button
@@ -173,6 +193,16 @@ export default function SoldiersPage() {
           ))}
         </TableBody>
       </Table>
+
+      {editingSoldier && (
+        <CreateResourceDialog
+          title="Edit Soldier"
+          description="Update the soldier's details."
+          fields={SOLDIER_FIELDS}
+          onSubmit={handleUpdate}
+          initialData={editingSoldier}
+        />
+      )}
     </div>
   );
 }

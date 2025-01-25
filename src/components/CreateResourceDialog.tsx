@@ -11,7 +11,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Plus } from "lucide-react";
 
 interface Field {
@@ -26,6 +26,7 @@ interface CreateResourceDialogProps {
   description: string;
   fields: Field[];
   onSubmit: (data: Record<string, string>) => void;
+  initialData?: Record<string, string>;
 }
 
 export function CreateResourceDialog({
@@ -33,9 +34,17 @@ export function CreateResourceDialog({
   description,
   fields,
   onSubmit,
+  initialData,
 }: CreateResourceDialogProps) {
   const [formData, setFormData] = useState<Record<string, string>>({});
   const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    if (initialData) {
+      setFormData(initialData);
+      setOpen(true);
+    }
+  }, [initialData]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -47,10 +56,12 @@ export function CreateResourceDialog({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button>
-          <Plus className="mr-2 h-4 w-4" />
-          Add New
-        </Button>
+        {!initialData && (
+          <Button>
+            <Plus className="mr-2 h-4 w-4" />
+            Add New
+          </Button>
+        )}
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
@@ -92,7 +103,7 @@ export function CreateResourceDialog({
             ))}
           </div>
           <DialogFooter>
-            <Button type="submit">Create</Button>
+            <Button type="submit">{initialData ? "Update" : "Create"}</Button>
           </DialogFooter>
         </form>
       </DialogContent>
