@@ -1,8 +1,8 @@
 import { useNavigate, useParams } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { toast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 import {
   Form,
   FormControl,
@@ -34,6 +34,7 @@ const formSchema = z.object({
 const EditAnnouncement = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -45,17 +46,13 @@ const EditAnnouncement = () => {
     },
   });
 
-  const { data: announcement, isLoading } = useQuery({
+  const { isLoading } = useQuery({
     queryKey: ["announcement", id],
     queryFn: async () => {
-      // Validate UUID format before making the request
+      // Validate UUID format
       const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
       if (!id || !uuidRegex.test(id)) {
-        toast({
-          title: "Invalid Announcement ID",
-          description: "Please select a valid announcement to edit",
-          variant: "destructive",
-        });
+        toast.error("Invalid announcement ID format");
         navigate("/announcements");
         throw new Error("Invalid announcement ID format");
       }
@@ -67,25 +64,17 @@ const EditAnnouncement = () => {
         .maybeSingle();
 
       if (error) {
-        toast({
-          title: "Error loading announcement",
-          description: error.message,
-          variant: "destructive",
-        });
+        toast.error("Error loading announcement");
         throw error;
       }
 
       if (!data) {
-        toast({
-          title: "Announcement not found",
-          description: "The requested announcement could not be found",
-          variant: "destructive",
-        });
+        toast.error("Announcement not found");
         navigate("/announcements");
         throw new Error("Announcement not found");
       }
 
-      // Set form values when data is loaded
+      // Set form values
       form.reset({
         title: data.title,
         content: data.content,
@@ -97,28 +86,30 @@ const EditAnnouncement = () => {
     },
   });
 
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    if (!id) return;
+  const updateMutation = useMutation({
+    mutationFn: async (values: z.infer<typeof formSchema>) => {
+      if (!id) return;
 
-    const { error } = await supabase
-      .from("announcements")
-      .update(values)
-      .eq("id", id);
+      const { error } = await supabase
+        .from("announcements")
+        .update(values)
+        .eq("id", id);
 
-    if (error) {
-      toast({
-        title: "Error updating announcement",
-        description: error.message,
-        variant: "destructive",
-      });
-      return;
-    }
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast.success("Announcement updated successfully");
+      queryClient.invalidateQueries({ queryKey: ["announcements"] });
+      navigate("/announcements");
+    },
+    onError: (error) => {
+      toast.error("Failed to update announcement");
+      console.error("Update error:", error);
+    },
+  });
 
-    toast({
-      title: "Success",
-      description: "Announcement updated successfully",
-    });
-    navigate("/announcements");
+  const onSubmit = (values: z.infer<typeof formSchema>) => {
+    updateMutation.mutate(values);
   };
 
   if (isLoading) {
@@ -234,7 +225,12 @@ const EditAnnouncement = () => {
               >
                 Cancel
               </Button>
-              <Button type="submit">Save Changes</Button>
+              <Button 
+                type="submit"
+                disabled={updateMutation.isPending}
+              >
+                {updateMutation.isPending ? "Saving..." : "Save Changes"}
+              </Button>
             </div>
           </form>
         </Form>
