@@ -281,6 +281,12 @@ export type Database = {
         }
         Returns: boolean
       }
+      get_user_id_by_email: {
+        Args: {
+          email: string
+        }
+        Returns: string
+      }
       get_user_role: {
         Args: {
           user_id: string
