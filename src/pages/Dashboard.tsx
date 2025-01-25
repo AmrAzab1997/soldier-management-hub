@@ -1,17 +1,14 @@
 import { useEffect, useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Users, FileText, Bell, Shield } from "lucide-react";
 import { useLocation } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-
-interface UserRole {
-  role: 'developer' | 'admin' | 'user';
-}
+import { StatsCard } from "@/components/Dashboard/StatsCard";
+import { RecentActivities } from "@/components/Dashboard/RecentActivities";
+import { ActionCard } from "@/components/Dashboard/ActionCard";
 
 const Dashboard = () => {
   const location = useLocation();
-  const currentPath = location.pathname;
   const [userRole, setUserRole] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -91,6 +88,8 @@ const Dashboard = () => {
     return false;
   });
 
+  const actions = ["Add Personnel", "New Case", "Announcement", "Reports"];
+
   return (
     <div className="min-h-screen bg-gray-50">
       <main className="p-6 space-y-6">
@@ -105,61 +104,20 @@ const Dashboard = () => {
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {filteredStats.map((stat) => (
-            <Card key={stat.title} className="hover:shadow-lg transition-shadow">
-              <CardHeader className="flex flex-row items-center justify-between pb-2">
-                <CardTitle className="text-sm font-medium text-military-gray">
-                  {stat.title}
-                </CardTitle>
-                <stat.icon className={`h-4 w-4 ${stat.color}`} />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">{stat.value}</div>
-              </CardContent>
-            </Card>
+            <StatsCard
+              key={stat.title}
+              title={stat.title}
+              value={stat.value}
+              icon={stat.icon}
+              color={stat.color}
+            />
           ))}
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Recent Activities</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {[1, 2, 3].map((i) => (
-                  <div key={i} className="flex items-center space-x-4">
-                    <div className="w-2 h-2 rounded-full bg-military-green" />
-                    <div className="flex-1">
-                      <p className="text-sm text-military-gray">
-                        Personnel update #{i}
-                      </p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-
+          <RecentActivities />
           {(userRole === 'admin' || userRole === 'developer') && (
-            <Card>
-              <CardHeader>
-                <CardTitle>{userRole === 'developer' ? 'Developer Actions' : 'Admin Actions'}</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-2 gap-4">
-                  {["Add Personnel", "New Case", "Announcement", "Reports"].map(
-                    (action) => (
-                      <button
-                        key={action}
-                        className="p-4 text-sm text-military-navy hover:bg-military-navy/10 rounded-lg transition-colors"
-                      >
-                        {action}
-                      </button>
-                    )
-                  )}
-                </div>
-              </CardContent>
-            </Card>
+            <ActionCard userRole={userRole} actions={actions} />
           )}
         </div>
       </main>
