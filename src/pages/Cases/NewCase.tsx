@@ -1,62 +1,52 @@
-import { CreateResourceDialog } from "@/components/CreateResourceDialog";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useToast } from "@/components/ui/use-toast";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
+import { CreateResourceDialog } from "@/components/CreateResourceDialog";
 
-export default function NewCasePage() {
-  const { toast } = useToast();
+export default function NewCase() {
   const navigate = useNavigate();
+  const [open, setOpen] = useState(true);
 
   const fields = [
+    { name: "case_number", label: "Case Number", type: "text" as const, required: true },
     { name: "title", label: "Title", type: "text" as const, required: true },
-    {
-      name: "description",
-      label: "Description",
-      type: "textarea" as const,
-      required: true,
-    },
-    {
-      name: "priority",
-      label: "Priority",
-      type: "text" as const,
-      required: true,
-    },
-    {
-      name: "assignedTo",
-      label: "Assigned To",
-      type: "text" as const,
-      required: true,
-    },
+    { name: "description", label: "Description", type: "textarea" as const, required: true },
+    { name: "priority", label: "Priority", type: "text" as const, required: true },
   ];
 
-  const handleCreate = (data: Record<string, string>) => {
-    // In a real app, this would make an API call
-    console.log("Creating new case:", data);
-    toast({
-      title: "Case Created",
-      description: "New case has been created successfully.",
-    });
-    navigate("/cases/active");
+  const handleSubmit = async (data: Record<string, string>) => {
+    try {
+      const { error } = await supabase.from("cases").insert([
+        {
+          case_number: data.case_number,
+          title: data.title,
+          description: data.description,
+          priority: data.priority,
+        },
+      ]);
+
+      if (error) throw error;
+
+      toast.success("Case created successfully");
+      navigate("/cases");
+    } catch (error) {
+      console.error("Error creating case:", error);
+      toast.error("Failed to create case");
+    }
   };
 
   return (
-    <div className="container mx-auto py-6 space-y-6">
-      <h1 className="text-3xl font-bold">New Case</h1>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>Create Case</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <CreateResourceDialog
-            title="Create New Case"
-            description="Enter the details for the new case"
-            fields={fields}
-            onSubmit={handleCreate}
-            initialData={{}} // This will automatically open the dialog
-          />
-        </CardContent>
-      </Card>
+    <div className="p-6">
+      <h1 className="text-2xl font-bold mb-6">Create New Case</h1>
+      <CreateResourceDialog
+        title="Create New Case"
+        description="Enter the details for the new case"
+        fields={fields}
+        onSubmit={handleSubmit}
+        open={open}
+        onOpenChange={setOpen}
+      />
     </div>
   );
 }
