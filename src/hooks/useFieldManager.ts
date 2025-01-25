@@ -58,7 +58,7 @@ export function useFieldManager(entity: 'officer' | 'soldier' | 'case') {
         required: field.is_required || false,
         entity: field.entity_type as 'officer' | 'soldier' | 'case',
         isSystem: true,
-        options: [] // System fields don't have options, so we provide an empty array
+        options: [] // System fields don't have options
       }));
 
       setSystemFields(fields);
@@ -90,7 +90,7 @@ export function useFieldManager(entity: 'officer' | 'soldier' | 'case') {
         type: field.field_type as Field['type'],
         required: field.is_required || false,
         entity: field.entity_type as 'officer' | 'soldier' | 'case',
-        options: field.options || [] // Custom fields may have options
+        options: Array.isArray(field.options) ? field.options : [] // Ensure options is always an array
       }));
 
       setCustomFields(fields);
@@ -115,7 +115,7 @@ export function useFieldManager(entity: 'officer' | 'soldier' | 'case') {
           field_label: newField.label,
           field_type: newField.type,
           is_required: newField.required,
-          options: newField.options
+          options: newField.options || []
         },
       ]);
 
@@ -148,7 +148,7 @@ export function useFieldManager(entity: 'officer' | 'soldier' | 'case') {
           field_label: editingField.label,
           field_type: editingField.type,
           is_required: editingField.required,
-          options: editingField.options
+          options: editingField.options || []
         })
         .eq('id', editingField.id);
 
