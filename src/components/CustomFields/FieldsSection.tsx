@@ -35,7 +35,8 @@ export function FieldsSection({
     isSystemFields,
     editingField,
     newField,
-    showForm 
+    showForm,
+    fieldsLength: fields?.length 
   });
 
   return (
