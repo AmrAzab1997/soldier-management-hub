@@ -11,6 +11,7 @@ import ActiveCasesPage from "@/pages/Cases/ActiveCases";
 import NewCasePage from "@/pages/Cases/NewCase";
 import AnnouncementsPage from "@/pages/Announcements/Announcements";
 import NewAnnouncementPage from "@/pages/Announcements/NewAnnouncement";
+import CustomFieldsPage from "@/pages/Settings/CustomFields";
 import { User } from "@supabase/supabase-js";
 
 interface AppRoutesProps {
@@ -48,6 +49,7 @@ export const PrivateRoutes = () => {
           <Route path="/cases/new" element={<NewCasePage />} />
           <Route path="/announcements" element={<AnnouncementsPage />} />
           <Route path="/announcements/new" element={<NewAnnouncementPage />} />
+          <Route path="/settings/custom-fields" element={<CustomFieldsPage />} />
         </Routes>
       </div>
     </>
