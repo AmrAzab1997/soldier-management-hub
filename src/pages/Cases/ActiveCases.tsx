@@ -115,13 +115,19 @@ const ActiveCasesPage = () => {
       // Get the current user's ID for assignment
       const { data: { user } } = await supabase.auth.getUser();
       
+      if (!user) {
+        toast.error("You must be logged in to create a case");
+        return;
+      }
+
       const { error } = await supabase.from("cases").insert([
         {
           title: data.title,
           description: data.description,
           status: data.status,
           priority: data.priority,
-          assigned_to: user?.id, // Use the current user's ID instead of a string
+          assigned_to: user.id,
+          created_by: user.id, // Set the created_by field to the current user's ID
           case_number: `CASE-${Date.now()}`,
         },
       ]);
