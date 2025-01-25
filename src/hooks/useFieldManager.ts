@@ -43,13 +43,9 @@ export function useFieldManager(entity: 'officer' | 'soldier' | 'case' | 'custom
         .eq('entity_type', entity)
         .eq('is_system', true);
 
-      if (error) {
-        console.error('Error fetching system fields:', error);
-        throw error;
-      }
+      if (error) throw error;
 
       console.log('System fields data:', data);
-
       const fields: Field[] = data.map(field => ({
         id: field.id,
         name: field.field_name,
@@ -61,7 +57,6 @@ export function useFieldManager(entity: 'officer' | 'soldier' | 'case' | 'custom
         options: []
       }));
 
-      console.log('Mapped system fields:', fields);
       setSystemFields(fields);
     } catch (error) {
       console.error('Error fetching system fields:', error);
@@ -77,13 +72,9 @@ export function useFieldManager(entity: 'officer' | 'soldier' | 'case' | 'custom
         .select('*')
         .eq('entity_type', entity);
 
-      if (error) {
-        console.error('Error fetching custom fields:', error);
-        throw error;
-      }
+      if (error) throw error;
 
       console.log('Custom fields data:', data);
-
       const fields: Field[] = data.map(field => ({
         id: field.id,
         name: field.field_name,
@@ -94,7 +85,6 @@ export function useFieldManager(entity: 'officer' | 'soldier' | 'case' | 'custom
         options: Array.isArray(field.options) ? field.options : []
       }));
 
-      console.log('Mapped custom fields:', fields);
       setCustomFields(fields);
     } catch (error) {
       console.error('Error fetching custom fields:', error);
@@ -123,7 +113,6 @@ export function useFieldManager(entity: 'officer' | 'soldier' | 'case' | 'custom
 
       if (error) throw error;
 
-      toast.success('Custom field added successfully');
       fetchCustomFields();
       setNewField({
         name: '',
@@ -135,6 +124,7 @@ export function useFieldManager(entity: 'officer' | 'soldier' | 'case' | 'custom
     } catch (error) {
       console.error('Error adding custom field:', error);
       toast.error('Failed to add custom field');
+      throw error;
     }
   };
 
@@ -156,12 +146,12 @@ export function useFieldManager(entity: 'officer' | 'soldier' | 'case' | 'custom
 
       if (error) throw error;
 
-      toast.success('Field updated successfully');
       setEditingField(null);
       fetchCustomFields();
     } catch (error) {
       console.error('Error updating field:', error);
       toast.error('Failed to update field');
+      throw error;
     }
   };
 
@@ -175,7 +165,6 @@ export function useFieldManager(entity: 'officer' | 'soldier' | 'case' | 'custom
 
       if (error) throw error;
 
-      toast.success('Field deleted successfully');
       fetchCustomFields();
     } catch (error) {
       console.error('Error deleting field:', error);
