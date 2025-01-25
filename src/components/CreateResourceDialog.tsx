@@ -11,14 +11,27 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { useEffect, useState } from "react";
 import { Plus } from "lucide-react";
+
+interface SelectOption {
+  value: string;
+  label: string;
+}
 
 interface Field {
   name: string;
   label: string;
-  type: "text" | "textarea" | "date" | "email";
+  type: "text" | "textarea" | "date" | "email" | "select";
   required?: boolean;
+  options?: SelectOption[];
 }
 
 interface CreateResourceDialogProps {
@@ -60,6 +73,63 @@ export function CreateResourceDialog({
     onOpenChange?.(false);
   };
 
+  const renderField = (field: Field) => {
+    switch (field.type) {
+      case "textarea":
+        return (
+          <Textarea
+            id={field.name}
+            required={field.required}
+            value={formData[field.name] || ""}
+            onChange={(e) =>
+              setFormData((prev) => ({
+                ...prev,
+                [field.name]: e.target.value,
+              }))
+            }
+          />
+        );
+      case "select":
+        return (
+          <Select
+            value={formData[field.name] || ""}
+            onValueChange={(value) =>
+              setFormData((prev) => ({
+                ...prev,
+                [field.name]: value,
+              }))
+            }
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="Select..." />
+            </SelectTrigger>
+            <SelectContent>
+              {field.options?.map((option) => (
+                <SelectItem key={option.value} value={option.value}>
+                  {option.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        );
+      default:
+        return (
+          <Input
+            id={field.name}
+            type={field.type}
+            required={field.required}
+            value={formData[field.name] || ""}
+            onChange={(e) =>
+              setFormData((prev) => ({
+                ...prev,
+                [field.name]: e.target.value,
+              }))
+            }
+          />
+        );
+    }
+  };
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogTrigger asChild>
@@ -80,32 +150,7 @@ export function CreateResourceDialog({
             {fields.map((field) => (
               <div key={field.name} className="space-y-2">
                 <Label htmlFor={field.name}>{field.label}</Label>
-                {field.type === "textarea" ? (
-                  <Textarea
-                    id={field.name}
-                    required={field.required}
-                    value={formData[field.name] || ""}
-                    onChange={(e) =>
-                      setFormData((prev) => ({
-                        ...prev,
-                        [field.name]: e.target.value,
-                      }))
-                    }
-                  />
-                ) : (
-                  <Input
-                    id={field.name}
-                    type={field.type}
-                    required={field.required}
-                    value={formData[field.name] || ""}
-                    onChange={(e) =>
-                      setFormData((prev) => ({
-                        ...prev,
-                        [field.name]: e.target.value,
-                      }))
-                    }
-                  />
-                )}
+                {renderField(field)}
               </div>
             ))}
           </div>
