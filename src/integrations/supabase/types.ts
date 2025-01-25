@@ -9,16 +9,245 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      announcements: {
+        Row: {
+          content: string
+          created_at: string
+          created_by: string | null
+          id: string
+          priority: string | null
+          status: string | null
+          title: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          priority?: string | null
+          status?: string | null
+          title: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          priority?: string | null
+          status?: string | null
+          title?: string
+        }
+        Relationships: []
+      }
+      cases: {
+        Row: {
+          assigned_to: string | null
+          case_number: string
+          created_at: string
+          created_by: string | null
+          custom_fields: Json | null
+          description: string | null
+          id: string
+          priority: string | null
+          status: string | null
+          title: string
+        }
+        Insert: {
+          assigned_to?: string | null
+          case_number: string
+          created_at?: string
+          created_by?: string | null
+          custom_fields?: Json | null
+          description?: string | null
+          id?: string
+          priority?: string | null
+          status?: string | null
+          title: string
+        }
+        Update: {
+          assigned_to?: string | null
+          case_number?: string
+          created_at?: string
+          created_by?: string | null
+          custom_fields?: Json | null
+          description?: string | null
+          id?: string
+          priority?: string | null
+          status?: string | null
+          title?: string
+        }
+        Relationships: []
+      }
+      custom_fields: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          entity_type: string
+          field_label: string
+          field_name: string
+          field_type: string
+          id: string
+          is_required: boolean | null
+          options: Json | null
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          entity_type: string
+          field_label: string
+          field_name: string
+          field_type: string
+          id?: string
+          is_required?: boolean | null
+          options?: Json | null
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          entity_type?: string
+          field_label?: string
+          field_name?: string
+          field_type?: string
+          id?: string
+          is_required?: boolean | null
+          options?: Json | null
+        }
+        Relationships: []
+      }
+      officers: {
+        Row: {
+          badge_number: string
+          created_at: string
+          created_by: string | null
+          custom_fields: Json | null
+          department: string | null
+          first_name: string
+          id: string
+          last_name: string
+          rank: string
+          status: string | null
+        }
+        Insert: {
+          badge_number: string
+          created_at?: string
+          created_by?: string | null
+          custom_fields?: Json | null
+          department?: string | null
+          first_name: string
+          id?: string
+          last_name: string
+          rank: string
+          status?: string | null
+        }
+        Update: {
+          badge_number?: string
+          created_at?: string
+          created_by?: string | null
+          custom_fields?: Json | null
+          department?: string | null
+          first_name?: string
+          id?: string
+          last_name?: string
+          rank?: string
+          status?: string | null
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          first_name: string | null
+          id: string
+          last_name: string | null
+        }
+        Insert: {
+          created_at?: string
+          first_name?: string | null
+          id: string
+          last_name?: string | null
+        }
+        Update: {
+          created_at?: string
+          first_name?: string | null
+          id?: string
+          last_name?: string | null
+        }
+        Relationships: []
+      }
+      soldiers: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          custom_fields: Json | null
+          first_name: string
+          id: string
+          last_name: string
+          rank: string
+          service_number: string
+          status: string | null
+          unit: string | null
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          custom_fields?: Json | null
+          first_name: string
+          id?: string
+          last_name: string
+          rank: string
+          service_number: string
+          status?: string | null
+          unit?: string | null
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          custom_fields?: Json | null
+          first_name?: string
+          id?: string
+          last_name?: string
+          rank?: string
+          service_number?: string
+          status?: string | null
+          unit?: string | null
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      get_user_role: {
+        Args: {
+          user_id: string
+        }
+        Returns: Database["public"]["Enums"]["app_role"]
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "developer" | "admin" | "user"
     }
     CompositeTypes: {
       [_ in never]: never

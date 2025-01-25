@@ -4,19 +4,32 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 
 const Login = () => {
-  const [credentials, setCredentials] = useState({ username: "", password: "" });
+  const [loading, setLoading] = useState(false);
+  const [credentials, setCredentials] = useState({ email: "", password: "" });
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: Implement actual authentication
-    if (credentials.username && credentials.password) {
-      toast.success("Login successful");
-      navigate("/dashboard");
-    } else {
-      toast.error("Please fill in all fields");
+    setLoading(true);
+
+    try {
+      const { error } = await supabase.auth.signInWithPassword({
+        email: credentials.email,
+        password: credentials.password,
+      });
+
+      if (error) {
+        toast.error(error.message);
+      } else {
+        toast.success("Login successful");
+      }
+    } catch (error) {
+      toast.error("An unexpected error occurred");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -36,13 +49,14 @@ const Login = () => {
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
               <Input
-                type="text"
-                placeholder="Username"
-                value={credentials.username}
+                type="email"
+                placeholder="Email"
+                value={credentials.email}
                 onChange={(e) =>
-                  setCredentials({ ...credentials, username: e.target.value })
+                  setCredentials({ ...credentials, email: e.target.value })
                 }
                 className="w-full"
+                disabled={loading}
               />
             </div>
             <div className="space-y-2">
@@ -54,10 +68,15 @@ const Login = () => {
                   setCredentials({ ...credentials, password: e.target.value })
                 }
                 className="w-full"
+                disabled={loading}
               />
             </div>
-            <Button type="submit" className="w-full bg-military-navy hover:bg-military-navy/90">
-              Login
+            <Button
+              type="submit"
+              className="w-full bg-military-navy hover:bg-military-navy/90"
+              disabled={loading}
+            >
+              {loading ? "Logging in..." : "Login"}
             </Button>
             <div className="text-center mt-4">
               <Button
@@ -65,6 +84,7 @@ const Login = () => {
                 variant="link"
                 onClick={handleRegister}
                 className="text-military-navy"
+                disabled={loading}
               >
                 Don't have an account? Register
               </Button>

@@ -4,13 +4,16 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 
 const Register = () => {
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
-    username: "",
     email: "",
     password: "",
     confirmPassword: "",
+    firstName: "",
+    lastName: "",
   });
   const navigate = useNavigate();
 
@@ -22,12 +25,30 @@ const Register = () => {
       return;
     }
 
-    // TODO: Implement actual registration
-    if (formData.username && formData.email && formData.password) {
-      toast.success("Registration successful");
-      navigate("/");
-    } else {
-      toast.error("Please fill in all fields");
+    setLoading(true);
+
+    try {
+      const { error } = await supabase.auth.signUp({
+        email: formData.email,
+        password: formData.password,
+        options: {
+          data: {
+            first_name: formData.firstName,
+            last_name: formData.lastName,
+          },
+        },
+      });
+
+      if (error) {
+        toast.error(error.message);
+      } else {
+        toast.success("Registration successful! Please check your email to confirm your account.");
+        navigate("/");
+      }
+    } catch (error) {
+      toast.error("An unexpected error occurred");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -48,12 +69,25 @@ const Register = () => {
             <div className="space-y-2">
               <Input
                 type="text"
-                placeholder="Username"
-                value={formData.username}
+                placeholder="First Name"
+                value={formData.firstName}
                 onChange={(e) =>
-                  setFormData({ ...formData, username: e.target.value })
+                  setFormData({ ...formData, firstName: e.target.value })
                 }
                 className="w-full"
+                disabled={loading}
+              />
+            </div>
+            <div className="space-y-2">
+              <Input
+                type="text"
+                placeholder="Last Name"
+                value={formData.lastName}
+                onChange={(e) =>
+                  setFormData({ ...formData, lastName: e.target.value })
+                }
+                className="w-full"
+                disabled={loading}
               />
             </div>
             <div className="space-y-2">
@@ -65,6 +99,7 @@ const Register = () => {
                   setFormData({ ...formData, email: e.target.value })
                 }
                 className="w-full"
+                disabled={loading}
               />
             </div>
             <div className="space-y-2">
@@ -76,6 +111,7 @@ const Register = () => {
                   setFormData({ ...formData, password: e.target.value })
                 }
                 className="w-full"
+                disabled={loading}
               />
             </div>
             <div className="space-y-2">
@@ -87,10 +123,15 @@ const Register = () => {
                   setFormData({ ...formData, confirmPassword: e.target.value })
                 }
                 className="w-full"
+                disabled={loading}
               />
             </div>
-            <Button type="submit" className="w-full bg-military-navy hover:bg-military-navy/90">
-              Register
+            <Button
+              type="submit"
+              className="w-full bg-military-navy hover:bg-military-navy/90"
+              disabled={loading}
+            >
+              {loading ? "Registering..." : "Register"}
             </Button>
             <div className="text-center mt-4">
               <Button
@@ -98,6 +139,7 @@ const Register = () => {
                 variant="link"
                 onClick={handleLogin}
                 className="text-military-navy"
+                disabled={loading}
               >
                 Already have an account? Login
               </Button>
