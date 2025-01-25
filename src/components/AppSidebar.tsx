@@ -98,7 +98,7 @@ export function AppSidebar() {
             Military App
           </span>
         </div>
-        <SidebarTrigger className="absolute right-0 top-4 z-50 translate-x-1/2 transform bg-background shadow-md">
+        <SidebarTrigger className="absolute right-0 top-4 translate-x-1/2 transform bg-background p-1.5 shadow-md hover:bg-accent">
           <ChevronLeft className="h-4 w-4" />
         </SidebarTrigger>
       </div>
