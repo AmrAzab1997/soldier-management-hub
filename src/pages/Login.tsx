@@ -9,6 +9,7 @@ import { supabase } from "@/integrations/supabase/client";
 const Login = () => {
   const [loading, setLoading] = useState(false);
   const [credentials, setCredentials] = useState({ email: "", password: "" });
+  const [isResetMode, setIsResetMode] = useState(false);
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -16,15 +17,28 @@ const Login = () => {
     setLoading(true);
 
     try {
-      const { error } = await supabase.auth.signInWithPassword({
-        email: credentials.email,
-        password: credentials.password,
-      });
-
-      if (error) {
-        toast.error(error.message);
+      if (isResetMode) {
+        const { error } = await supabase.auth.resetPasswordForEmail(credentials.email, {
+          redirectTo: `${window.location.origin}/update-password`,
+        });
+        
+        if (error) {
+          toast.error(error.message);
+        } else {
+          toast.success("Password reset instructions sent to your email");
+          setIsResetMode(false);
+        }
       } else {
-        toast.success("Login successful");
+        const { error } = await supabase.auth.signInWithPassword({
+          email: credentials.email,
+          password: credentials.password,
+        });
+
+        if (error) {
+          toast.error(error.message);
+        } else {
+          toast.success("Login successful");
+        }
       }
     } catch (error) {
       toast.error("An unexpected error occurred");
@@ -59,35 +73,51 @@ const Login = () => {
                 disabled={loading}
               />
             </div>
-            <div className="space-y-2">
-              <Input
-                type="password"
-                placeholder="Password"
-                value={credentials.password}
-                onChange={(e) =>
-                  setCredentials({ ...credentials, password: e.target.value })
-                }
-                className="w-full"
-                disabled={loading}
-              />
-            </div>
+            {!isResetMode && (
+              <div className="space-y-2">
+                <Input
+                  type="password"
+                  placeholder="Password"
+                  value={credentials.password}
+                  onChange={(e) =>
+                    setCredentials({ ...credentials, password: e.target.value })
+                  }
+                  className="w-full"
+                  disabled={loading}
+                />
+              </div>
+            )}
             <Button
               type="submit"
               className="w-full bg-military-navy hover:bg-military-navy/90"
               disabled={loading}
             >
-              {loading ? "Logging in..." : "Login"}
+              {loading 
+                ? isResetMode ? "Sending..." : "Logging in..." 
+                : isResetMode ? "Send Reset Instructions" : "Login"
+              }
             </Button>
-            <div className="text-center mt-4">
+            <div className="flex justify-between items-center mt-4">
               <Button
                 type="button"
                 variant="link"
-                onClick={handleRegister}
+                onClick={() => setIsResetMode(!isResetMode)}
                 className="text-military-navy"
                 disabled={loading}
               >
-                Don't have an account? Register
+                {isResetMode ? "Back to Login" : "Forgot Password?"}
               </Button>
+              {!isResetMode && (
+                <Button
+                  type="button"
+                  variant="link"
+                  onClick={handleRegister}
+                  className="text-military-navy"
+                  disabled={loading}
+                >
+                  Register
+                </Button>
+              )}
             </div>
           </form>
         </CardContent>
