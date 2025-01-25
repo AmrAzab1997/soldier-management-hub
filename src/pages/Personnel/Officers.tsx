@@ -139,6 +139,26 @@ export default function OfficersPage() {
     );
   };
 
+  // Filter and search logic
+  const filteredOfficers = officers.filter((officer) => {
+    // Search filter
+    const matchesSearch = officer.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         officer.rank.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         officer.division.toLowerCase().includes(searchTerm.toLowerCase());
+
+    // Status filter
+    const activeStatusFilters = filters.find(f => f.name === "Status")?.options.filter(o => o.checked) || [];
+    const matchesStatus = activeStatusFilters.length === 0 || 
+                         activeStatusFilters.some(f => officer.status === f.value);
+
+    // Division filter
+    const activeDivisionFilters = filters.find(f => f.name === "Division")?.options.filter(o => o.checked) || [];
+    const matchesDivision = activeDivisionFilters.length === 0 || 
+                           activeDivisionFilters.some(f => officer.division.toLowerCase() === f.value);
+
+    return matchesSearch && matchesStatus && matchesDivision;
+  });
+
   return (
     <div className="container mx-auto py-6 space-y-6">
       <div className="flex justify-between items-center">
@@ -174,7 +194,7 @@ export default function OfficersPage() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {officers.map((officer) => (
+            {filteredOfficers.map((officer) => (
               <TableRow key={officer.id}>
                 <TableCell className="font-medium">{officer.name}</TableCell>
                 <TableCell>{officer.rank}</TableCell>
