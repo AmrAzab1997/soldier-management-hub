@@ -1,5 +1,6 @@
 import { usePermissions } from '@/contexts/PermissionsContext';
 import { useFieldManager } from '@/hooks/useFieldManager';
+import { Field } from '@/types/user';
 import { FieldsSection } from './CustomFields/FieldsSection';
 
 interface CustomFieldsManagerProps {
