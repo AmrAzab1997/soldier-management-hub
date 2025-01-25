@@ -143,7 +143,7 @@ const Dashboard = () => {
           {(userRole === 'admin' || userRole === 'developer') && (
             <Card>
               <CardHeader>
-                <CardTitle>Admin Actions</CardTitle>
+                <CardTitle>{userRole === 'developer' ? 'Developer Actions' : 'Admin Actions'}</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-2 gap-4">
