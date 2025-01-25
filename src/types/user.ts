@@ -18,7 +18,7 @@ export interface Field {
   label: string;
   type: 'text' | 'number' | 'date' | 'email' | 'select' | 'textarea';
   required: boolean;
-  options?: string[] | null;
+  options?: any; // Changed to handle JSON type from database
   entity: 'officer' | 'soldier' | 'case';
   isSystem?: boolean;
 }

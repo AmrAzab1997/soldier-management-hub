@@ -58,7 +58,7 @@ export function useFieldManager(entity: 'officer' | 'soldier' | 'case') {
         required: field.is_required || false,
         entity: field.entity_type as 'officer' | 'soldier' | 'case',
         isSystem: true,
-        options: field.options
+        options: field.options || [] // Ensure options is always an array
       }));
 
       setSystemFields(fields);
@@ -90,7 +90,7 @@ export function useFieldManager(entity: 'officer' | 'soldier' | 'case') {
         type: field.field_type as Field['type'],
         required: field.is_required || false,
         entity: field.entity_type as 'officer' | 'soldier' | 'case',
-        options: field.options
+        options: field.options || [] // Ensure options is always an array
       }));
 
       setCustomFields(fields);
