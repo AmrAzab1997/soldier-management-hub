@@ -1,20 +1,26 @@
-import { RouteObject } from "react-router-dom";
+import { createBrowserRouter } from "react-router-dom";
 import { Layout } from "@/components/Layout";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
-import Dashboard from "@/pages/Dashboard";
-import Settings from "@/pages/Settings";
-import CustomFields from "@/pages/Settings/CustomFields";
-import DatabaseManager from "@/pages/Settings/DatabaseManager";
-import ActiveCases from "@/pages/Cases/ActiveCases";
-import NewCase from "@/pages/Cases/NewCase";
-import Soldiers from "@/pages/Personnel/Soldiers";
-import NewSoldier from "@/pages/Personnel/Soldiers/NewSoldier";
-import Officers from "@/pages/Personnel/Officers";
-import NewOfficer from "@/pages/Personnel/Officers/NewOfficer";
-import Announcements from "@/pages/Announcements/Announcements";
-import NewAnnouncement from "@/pages/Announcements/NewAnnouncement";
+import { Index } from "@/pages/Index";
+import { Dashboard } from "@/pages/Dashboard";
+import { ActiveCases } from "@/pages/Cases/ActiveCases";
+import { NewCase } from "@/pages/Cases/NewCase";
+import { Soldiers } from "@/pages/Personnel/Soldiers";
+import { NewSoldier } from "@/pages/Personnel/Soldiers/NewSoldier";
+import { Officers } from "@/pages/Personnel/Officers";
+import { NewOfficer } from "@/pages/Personnel/Officers/NewOfficer";
+import { Announcements } from "@/pages/Announcements/Announcements";
+import { NewAnnouncement } from "@/pages/Announcements/NewAnnouncement";
+import { CustomFields } from "@/pages/Settings/CustomFields";
+import { DatabaseManager } from "@/pages/Settings/DatabaseManager";
+import { Login } from "@/pages/Login";
 
-export const router: RouteObject[] = [
+export const router = createBrowserRouter([
+  {
+    path: "/login",
+    element: <Login />,
+    errorElement: <ErrorBoundary />,
+  },
   {
     path: "/",
     element: <Layout />,
@@ -22,6 +28,10 @@ export const router: RouteObject[] = [
     children: [
       {
         index: true,
+        element: <Index />,
+      },
+      {
+        path: "dashboard",
         element: <Dashboard />,
       },
       {
@@ -38,33 +48,28 @@ export const router: RouteObject[] = [
         ],
       },
       {
-        path: "personnel",
+        path: "personnel/soldiers",
         children: [
           {
-            path: "soldiers",
-            children: [
-              {
-                index: true,
-                element: <Soldiers />,
-              },
-              {
-                path: "new",
-                element: <NewSoldier />,
-              },
-            ],
+            index: true,
+            element: <Soldiers />,
           },
           {
-            path: "officers",
-            children: [
-              {
-                index: true,
-                element: <Officers />,
-              },
-              {
-                path: "new",
-                element: <NewOfficer />,
-              },
-            ],
+            path: "new",
+            element: <NewSoldier />,
+          },
+        ],
+      },
+      {
+        path: "personnel/officers",
+        children: [
+          {
+            index: true,
+            element: <Officers />,
+          },
+          {
+            path: "new",
+            element: <NewOfficer />,
           },
         ],
       },
@@ -82,22 +87,13 @@ export const router: RouteObject[] = [
         ],
       },
       {
-        path: "settings",
-        children: [
-          {
-            index: true,
-            element: <Settings />,
-          },
-          {
-            path: "custom-fields",
-            element: <CustomFields />,
-          },
-          {
-            path: "database",
-            element: <DatabaseManager />,
-          },
-        ],
+        path: "settings/custom-fields",
+        element: <CustomFields />,
+      },
+      {
+        path: "settings/database",
+        element: <DatabaseManager />,
       },
     ],
   },
-];
+]);
