@@ -64,6 +64,7 @@ const ActiveCasesPage = () => {
 
   const fetchCases = async () => {
     try {
+      console.log("Fetching cases...");
       const { data: casesData, error } = await supabase
         .from("cases")
         .select(`
@@ -75,20 +76,31 @@ const ActiveCasesPage = () => {
         `)
         .order("created_at", { ascending: false });
 
-      if (error) throw error;
+      if (error) {
+        console.error("Error fetching cases:", error);
+        throw error;
+      }
 
-      const formattedCases: Case[] = casesData.map((case_) => ({
-        id: case_.id,
-        title: case_.title,
-        description: case_.description || "",
-        status: case_.status as Case["status"],
-        priority: case_.priority as Case["priority"],
-        createdByName: case_.profiles
-          ? `${case_.profiles.first_name || ""} ${case_.profiles.last_name || ""}`.trim() || "Unknown"
-          : "Unknown",
-        createdAt: case_.created_at,
-      }));
+      console.log("Cases data:", casesData);
 
+      const formattedCases: Case[] = casesData.map((case_) => {
+        console.log("Processing case:", case_);
+        console.log("Profile data:", case_.profiles);
+        
+        return {
+          id: case_.id,
+          title: case_.title,
+          description: case_.description || "",
+          status: case_.status as Case["status"],
+          priority: case_.priority as Case["priority"],
+          createdByName: case_.profiles
+            ? `${case_.profiles.first_name || ""} ${case_.profiles.last_name || ""}`.trim() || "Unknown"
+            : "Unknown",
+          createdAt: case_.created_at,
+        };
+      });
+
+      console.log("Formatted cases:", formattedCases);
       setCases(formattedCases);
     } catch (error) {
       console.error("Error fetching cases:", error);
