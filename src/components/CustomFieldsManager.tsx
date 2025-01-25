@@ -25,6 +25,10 @@ export function CustomFieldsManager({ entity }: CustomFieldsManagerProps) {
     handleDeleteField,
   } = useFieldManager(entity);
 
+  console.log('Checking permissions for entity:', entity);
+  const hasPermission = canManageFields(entity);
+  console.log('Has permission to manage fields:', hasPermission);
+
   const handleEditingFieldChange = (field: Partial<Field>) => {
     if (editingField) {
       setEditingField({ ...editingField, ...field });
@@ -50,7 +54,8 @@ export function CustomFieldsManager({ entity }: CustomFieldsManagerProps) {
     }
   };
 
-  if (!canManageFields(entity)) {
+  if (!hasPermission) {
+    console.error('Permission denied for entity:', entity);
     return (
       <div className="p-6 bg-red-50 border border-red-200 rounded-lg">
         <p className="text-red-700">You don't have permission to manage fields for this entity.</p>
