@@ -1,6 +1,8 @@
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
-import { Users, FileText, Bell, Home } from "lucide-react";
+import { Users, FileText, Bell, Home, LogOut } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 const navigationItems = [
   { name: "Dashboard", href: "/dashboard", icon: Home },
@@ -35,6 +37,18 @@ const navigationItems = [
 
 export function Navigation() {
   const location = useLocation();
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    try {
+      await supabase.auth.signOut();
+      toast.success("Logged out successfully");
+      navigate("/");
+    } catch (error) {
+      toast.error("Error logging out");
+      console.error("Error:", error);
+    }
+  };
 
   return (
     <nav className="fixed top-0 z-50 w-full border-b border-gray-200 bg-white">
@@ -88,6 +102,13 @@ export function Navigation() {
                 )}
               </div>
             ))}
+            <button
+              onClick={handleLogout}
+              className="flex items-center px-3 py-2 text-sm font-medium text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+            >
+              <LogOut className="w-5 h-5 mr-2" />
+              Logout
+            </button>
           </div>
         </div>
       </div>
