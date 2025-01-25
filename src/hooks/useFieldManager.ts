@@ -17,6 +17,7 @@ export function useFieldManager(entity: 'officer' | 'soldier' | 'case') {
   });
 
   useEffect(() => {
+    console.log('Fetching fields for entity:', entity);
     setIsLoading(true);
     Promise.all([
       fetchSystemFields(),
@@ -36,13 +37,19 @@ export function useFieldManager(entity: 'officer' | 'soldier' | 'case') {
 
   const fetchSystemFields = async () => {
     try {
+      console.log('Fetching system fields...');
       const { data, error } = await supabase
         .from('entity_fields')
         .select('*')
         .eq('entity_type', entity)
         .eq('is_system', true);
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error fetching system fields:', error);
+        throw error;
+      }
+
+      console.log('System fields data:', data);
 
       const fields: Field[] = data.map(field => ({
         id: field.id,
@@ -63,12 +70,18 @@ export function useFieldManager(entity: 'officer' | 'soldier' | 'case') {
 
   const fetchCustomFields = async () => {
     try {
+      console.log('Fetching custom fields...');
       const { data, error } = await supabase
         .from('custom_fields')
         .select('*')
         .eq('entity_type', entity);
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error fetching custom fields:', error);
+        throw error;
+      }
+
+      console.log('Custom fields data:', data);
 
       const fields: Field[] = data.map(field => ({
         id: field.id,
@@ -93,6 +106,7 @@ export function useFieldManager(entity: 'officer' | 'soldier' | 'case') {
     }
 
     try {
+      console.log('Adding new custom field:', newField);
       const { error } = await supabase.from('custom_fields').insert([
         {
           entity_type: entity,
@@ -124,6 +138,7 @@ export function useFieldManager(entity: 'officer' | 'soldier' | 'case') {
     if (!editingField) return;
 
     try {
+      console.log('Updating custom field:', editingField);
       const { error } = await supabase
         .from('custom_fields')
         .update({
@@ -147,6 +162,7 @@ export function useFieldManager(entity: 'officer' | 'soldier' | 'case') {
 
   const handleDeleteField = async (fieldId: string) => {
     try {
+      console.log('Deleting custom field:', fieldId);
       const { error } = await supabase
         .from('custom_fields')
         .delete()

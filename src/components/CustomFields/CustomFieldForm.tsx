@@ -2,7 +2,7 @@ import { Field } from '@/types/user';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Select } from '@/components/ui/select';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 interface CustomFieldFormProps {
   field: Partial<Field>;
@@ -20,13 +20,13 @@ export function CustomFieldForm({
   isEditing = false 
 }: CustomFieldFormProps) {
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 p-4 bg-gray-50 rounded-lg">
       <div className="grid grid-cols-2 gap-4">
         <div>
           <Label htmlFor="fieldName">Field Name</Label>
           <Input
             id="fieldName"
-            value={field.name}
+            value={field.name || ''}
             onChange={(e) => onChange({ ...field, name: e.target.value })}
             placeholder="e.g., department"
           />
@@ -35,7 +35,7 @@ export function CustomFieldForm({
           <Label htmlFor="fieldLabel">Field Label</Label>
           <Input
             id="fieldLabel"
-            value={field.label}
+            value={field.label || ''}
             onChange={(e) => onChange({ ...field, label: e.target.value })}
             placeholder="e.g., Department"
           />
@@ -49,18 +49,24 @@ export function CustomFieldForm({
             value={field.type}
             onValueChange={(value) => onChange({ ...field, type: value as Field['type'] })}
           >
-            <option value="text">Text</option>
-            <option value="number">Number</option>
-            <option value="date">Date</option>
-            <option value="email">Email</option>
-            <option value="select">Select</option>
+            <SelectTrigger>
+              <SelectValue placeholder="Select field type" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="text">Text</SelectItem>
+              <SelectItem value="number">Number</SelectItem>
+              <SelectItem value="date">Date</SelectItem>
+              <SelectItem value="email">Email</SelectItem>
+              <SelectItem value="select">Select</SelectItem>
+              <SelectItem value="textarea">Text Area</SelectItem>
+            </SelectContent>
           </Select>
         </div>
         <div className="flex items-center space-x-2 pt-6">
           <input
             type="checkbox"
             id="required"
-            checked={field.required}
+            checked={field.required || false}
             onChange={(e) => onChange({ ...field, required: e.target.checked })}
             className="rounded border-gray-300"
           />

@@ -12,7 +12,7 @@ export function CustomFieldsList({ fields, onEdit, onDelete, isSystemFields = fa
   return (
     <div className="space-y-4">
       {fields.map((field) => (
-        <div key={field.id} className="flex items-center justify-between p-4 bg-gray-50 rounded">
+        <div key={field.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-200">
           <div>
             <p className="font-medium">{field.label}</p>
             <p className="text-sm text-gray-500">
@@ -40,7 +40,9 @@ export function CustomFieldsList({ fields, onEdit, onDelete, isSystemFields = fa
         </div>
       ))}
       {fields.length === 0 && (
-        <p className="text-gray-500 italic">No {isSystemFields ? 'system' : 'custom'} fields found.</p>
+        <p className="text-gray-500 italic text-center py-4">
+          No {isSystemFields ? 'system' : 'custom'} fields found.
+        </p>
       )}
     </div>
   );
