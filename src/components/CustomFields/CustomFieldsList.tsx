@@ -1,5 +1,6 @@
 import { Field } from '@/types/user';
 import { Button } from '@/components/ui/button';
+import { Pencil } from 'lucide-react';
 
 interface CustomFieldsListProps {
   fields: Field[];
@@ -32,15 +33,16 @@ export function CustomFieldsList({ fields = [], onEdit, onDelete, isSystemFields
               Type: {field.type} | Name: {field.name} | Required: {field.required ? 'Yes' : 'No'}
             </p>
           </div>
-          {!isSystemFields && (
-            <div className="space-x-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => onEdit(field)}
-              >
-                Edit
-              </Button>
+          <div className="space-x-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => onEdit(field)}
+            >
+              <Pencil className="h-4 w-4 mr-1" />
+              Edit
+            </Button>
+            {!isSystemFields && (
               <Button
                 variant="destructive"
                 size="sm"
@@ -48,8 +50,8 @@ export function CustomFieldsList({ fields = [], onEdit, onDelete, isSystemFields
               >
                 Delete
               </Button>
-            </div>
-          )}
+            )}
+          </div>
         </div>
       ))}
     </div>

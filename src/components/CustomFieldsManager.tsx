@@ -102,8 +102,13 @@ export function CustomFieldsManager({ entity }: CustomFieldsManagerProps) {
           <FieldsSection
             fields={systemFields}
             isSystemFields={true}
-            onEdit={() => {}}
+            onEdit={setEditingField}
             onDelete={() => {}}
+            editingField={editingField}
+            onSubmit={handleSubmit}
+            onCancel={() => setEditingField(null)}
+            onChange={handleEditingFieldChange}
+            showForm={!!editingField?.isSystem}
           />
         </div>
 
