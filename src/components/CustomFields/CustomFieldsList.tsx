@@ -8,8 +8,8 @@ interface CustomFieldsListProps {
   isSystemFields?: boolean;
 }
 
-export function CustomFieldsList({ fields, onEdit, onDelete, isSystemFields = false }: CustomFieldsListProps) {
-  if (!Array.isArray(fields) || fields.length === 0) {
+export function CustomFieldsList({ fields = [], onEdit, onDelete, isSystemFields = false }: CustomFieldsListProps) {
+  if (fields.length === 0) {
     return (
       <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
         <p className="text-gray-500 italic text-center">

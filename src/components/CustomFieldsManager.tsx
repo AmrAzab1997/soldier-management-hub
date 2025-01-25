@@ -48,29 +48,31 @@ export function CustomFieldsManager({ entity }: CustomFieldsManagerProps) {
     <div className="space-y-8 p-6 bg-white rounded-lg shadow">
       <h3 className="text-xl font-semibold">Manage Fields for {entity}</h3>
       
-      <div className="mb-8">
-        <FieldsSection
-          title="System Fields"
-          fields={systemFields || []}
-          isSystemFields={true}
-          onEdit={() => {}}
-          onDelete={() => {}}
-        />
-      </div>
+      <div className="space-y-8">
+        <div>
+          <h4 className="text-lg font-semibold mb-4">System Fields</h4>
+          <FieldsSection
+            fields={systemFields}
+            isSystemFields={true}
+            onEdit={() => {}}
+            onDelete={() => {}}
+          />
+        </div>
 
-      <div>
-        <FieldsSection
-          title="Custom Fields"
-          fields={customFields || []}
-          onEdit={setEditingField}
-          onDelete={handleDeleteField}
-          editingField={editingField}
-          newField={newField}
-          onSubmit={editingField ? handleUpdateField : handleAddField}
-          onCancel={editingField ? () => setEditingField(null) : undefined}
-          onChange={editingField ? handleEditingFieldChange : handleNewFieldChange}
-          showForm={true}
-        />
+        <div>
+          <h4 className="text-lg font-semibold mb-4">Custom Fields</h4>
+          <FieldsSection
+            fields={customFields}
+            onEdit={setEditingField}
+            onDelete={handleDeleteField}
+            editingField={editingField}
+            newField={newField}
+            onSubmit={editingField ? handleUpdateField : handleAddField}
+            onCancel={editingField ? () => setEditingField(null) : undefined}
+            onChange={editingField ? handleEditingFieldChange : handleNewFieldChange}
+            showForm={true}
+          />
+        </div>
       </div>
     </div>
   );

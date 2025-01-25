@@ -3,7 +3,6 @@ import { CustomFieldForm } from './CustomFieldForm';
 import { CustomFieldsList } from './CustomFieldsList';
 
 interface FieldsSectionProps {
-  title: string;
   fields: Field[];
   onEdit?: (field: Field) => void;
   onDelete?: (fieldId: string) => void;
@@ -17,8 +16,7 @@ interface FieldsSectionProps {
 }
 
 export function FieldsSection({
-  title,
-  fields,
+  fields = [],
   onEdit,
   onDelete,
   isSystemFields = false,
@@ -31,28 +29,22 @@ export function FieldsSection({
 }: FieldsSectionProps) {
   return (
     <div className="space-y-4">
-      <h4 className="text-lg font-semibold">{title}</h4>
-      
       {showForm && !isSystemFields && (
-        <div className="mb-4">
-          <CustomFieldForm
-            field={editingField || newField!}
-            onSubmit={onSubmit!}
-            onCancel={onCancel}
-            onChange={onChange!}
-            isEditing={!!editingField}
-          />
-        </div>
+        <CustomFieldForm
+          field={editingField || newField!}
+          onSubmit={onSubmit!}
+          onCancel={onCancel}
+          onChange={onChange!}
+          isEditing={!!editingField}
+        />
       )}
 
-      <div className="mt-4">
-        <CustomFieldsList
-          fields={fields}
-          onEdit={onEdit!}
-          onDelete={onDelete!}
-          isSystemFields={isSystemFields}
-        />
-      </div>
+      <CustomFieldsList
+        fields={fields}
+        onEdit={onEdit!}
+        onDelete={onDelete!}
+        isSystemFields={isSystemFields}
+      />
     </div>
   );
 }
