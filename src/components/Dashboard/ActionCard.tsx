@@ -8,6 +8,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Plus } from "lucide-react";
 
 interface ActionCardProps {
   userRole: string;
@@ -43,16 +44,23 @@ export function ActionCard({ userRole, actions }: ActionCardProps) {
           <DropdownMenuTrigger asChild>
             <Button
               variant="outline"
-              className="p-4 text-sm text-military-navy hover:bg-military-navy/10 rounded-lg transition-colors w-full"
+              className="w-full flex items-center justify-center gap-2 p-4 text-sm font-medium text-military-navy hover:bg-military-navy/10 rounded-lg transition-colors"
             >
+              <Plus className="h-4 w-4" />
               {action}
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent>
-            <DropdownMenuItem onClick={() => navigate("/personnel/officers/new")}>
+          <DropdownMenuContent align="end" className="w-48">
+            <DropdownMenuItem 
+              onClick={() => navigate("/personnel/officers/new")}
+              className="cursor-pointer"
+            >
               Add Officer
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => navigate("/personnel/soldiers/new")}>
+            <DropdownMenuItem 
+              onClick={() => navigate("/personnel/soldiers/new")}
+              className="cursor-pointer"
+            >
               Add Soldier
             </DropdownMenuItem>
           </DropdownMenuContent>
@@ -64,7 +72,7 @@ export function ActionCard({ userRole, actions }: ActionCardProps) {
       <Button
         variant="outline"
         onClick={() => handleAction(action)}
-        className="p-4 text-sm text-military-navy hover:bg-military-navy/10 rounded-lg transition-colors w-full"
+        className="w-full p-4 text-sm text-military-navy hover:bg-military-navy/10 rounded-lg transition-colors"
       >
         {action}
       </Button>
