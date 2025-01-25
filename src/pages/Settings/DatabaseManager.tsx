@@ -34,6 +34,13 @@ export default function DatabaseManager() {
   useEffect(() => {
     const checkDeveloperStatus = async () => {
       try {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (!session) {
+          toast.error('Please sign in to access the database manager');
+          setLoading(false);
+          return;
+        }
+
         const { data, error } = await supabase.rpc('is_developer');
         if (error) throw error;
         setIsDeveloper(data);
@@ -72,6 +79,12 @@ export default function DatabaseManager() {
     }
 
     try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        toast.error('Please sign in to create tables');
+        return;
+      }
+
       // Create the table
       const createTableSQL = `
         CREATE TABLE IF NOT EXISTS ${tableName} (
