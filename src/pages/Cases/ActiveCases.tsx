@@ -65,40 +65,43 @@ const ActiveCasesPage = () => {
   const fetchCases = async () => {
     try {
       console.log("Fetching cases...");
-      const { data: casesData, error } = await supabase
+      // First get all cases
+      const { data: casesData, error: casesError } = await supabase
         .from("cases")
-        .select(`
-          *,
-          profiles!cases_created_by_fkey (
-            first_name,
-            last_name
-          )
-        `)
+        .select("*")
         .order("created_at", { ascending: false });
 
-      if (error) {
-        console.error("Error fetching cases:", error);
-        throw error;
-      }
+      if (casesError) throw casesError;
 
-      console.log("Cases data:", casesData);
+      // Then get the profiles for the created_by users
+      const createdByIds = casesData
+        .map(c => c.created_by)
+        .filter((id): id is string => id !== null);
 
-      const formattedCases: Case[] = casesData.map((case_) => {
-        console.log("Processing case:", case_);
-        console.log("Profile data:", case_.profiles);
-        
-        return {
-          id: case_.id,
-          title: case_.title,
-          description: case_.description || "",
-          status: case_.status as Case["status"],
-          priority: case_.priority as Case["priority"],
-          createdByName: case_.profiles
-            ? `${case_.profiles.first_name || ""} ${case_.profiles.last_name || ""}`.trim() || "Unknown"
-            : "Unknown",
-          createdAt: case_.created_at,
-        };
-      });
+      const { data: profilesData, error: profilesError } = await supabase
+        .from("profiles")
+        .select("id, first_name, last_name")
+        .in("id", createdByIds);
+
+      if (profilesError) throw profilesError;
+
+      // Create a map of user IDs to names for quick lookup
+      const userNameMap = new Map(
+        profilesData.map(p => [
+          p.id,
+          `${p.first_name || ""} ${p.last_name || ""}`.trim() || "Unknown"
+        ])
+      );
+
+      const formattedCases: Case[] = casesData.map((case_) => ({
+        id: case_.id,
+        title: case_.title,
+        description: case_.description || "",
+        status: case_.status as Case["status"],
+        priority: case_.priority as Case["priority"],
+        createdByName: case_.created_by ? userNameMap.get(case_.created_by) || "Unknown" : "Unknown",
+        createdAt: case_.created_at,
+      }));
 
       console.log("Formatted cases:", formattedCases);
       setCases(formattedCases);
