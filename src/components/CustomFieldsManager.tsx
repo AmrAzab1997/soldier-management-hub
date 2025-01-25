@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { usePermissions } from '@/contexts/PermissionsContext';
 import { Field } from '@/types/user';
 import { Button } from '@/components/ui/button';
@@ -6,13 +6,16 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select } from '@/components/ui/select';
 import { toast } from 'sonner';
+import { supabase } from '@/integrations/supabase/client';
 
 interface CustomFieldsManagerProps {
   entity: 'officer' | 'soldier' | 'case';
 }
 
 export function CustomFieldsManager({ entity }: CustomFieldsManagerProps) {
-  const { canManageFields, customFields, addCustomField, updateCustomField, deleteCustomField } = usePermissions();
+  const { canManageFields } = usePermissions();
+  const [customFields, setCustomFields] = useState<Field[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [newField, setNewField] = useState<Partial<Field>>({
     name: '',
     label: '',
@@ -21,37 +24,95 @@ export function CustomFieldsManager({ entity }: CustomFieldsManagerProps) {
     entity,
   });
 
-  if (!canManageFields(entity)) {
-    return null;
-  }
+  useEffect(() => {
+    fetchCustomFields();
+  }, [entity]);
 
-  const handleAddField = () => {
+  const fetchCustomFields = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('custom_fields')
+        .select('*')
+        .eq('entity_type', entity);
+
+      if (error) throw error;
+
+      const fields: Field[] = data.map(field => ({
+        id: field.id,
+        name: field.field_name,
+        label: field.field_label,
+        type: field.field_type as Field['type'],
+        required: field.is_required || false,
+        entity: field.entity_type as 'officer' | 'soldier' | 'case',
+      }));
+
+      setCustomFields(fields);
+    } catch (error) {
+      console.error('Error fetching custom fields:', error);
+      toast.error('Failed to load custom fields');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleAddField = async () => {
     if (!newField.name || !newField.label || !newField.type) {
       toast.error('Please fill in all required fields');
       return;
     }
 
-    addCustomField({
-      id: Math.random().toString(36).substr(2, 9),
-      name: newField.name,
-      label: newField.label,
-      type: newField.type as Field['type'],
-      required: newField.required || false,
-      entity,
-    });
+    try {
+      const { error } = await supabase.from('custom_fields').insert([
+        {
+          entity_type: entity,
+          field_name: newField.name,
+          field_label: newField.label,
+          field_type: newField.type,
+          is_required: newField.required,
+        },
+      ]);
 
-    setNewField({
-      name: '',
-      label: '',
-      type: 'text',
-      required: false,
-      entity,
-    });
+      if (error) throw error;
 
-    toast.success('Custom field added successfully');
+      toast.success('Custom field added successfully');
+      fetchCustomFields();
+      setNewField({
+        name: '',
+        label: '',
+        type: 'text',
+        required: false,
+        entity,
+      });
+    } catch (error) {
+      console.error('Error adding custom field:', error);
+      toast.error('Failed to add custom field');
+    }
   };
 
-  const entityFields = customFields.filter(field => field.entity === entity);
+  const handleDeleteField = async (fieldId: string) => {
+    try {
+      const { error } = await supabase
+        .from('custom_fields')
+        .delete()
+        .eq('id', fieldId);
+
+      if (error) throw error;
+
+      toast.success('Field deleted successfully');
+      fetchCustomFields();
+    } catch (error) {
+      console.error('Error deleting field:', error);
+      toast.error('Failed to delete field');
+    }
+  };
+
+  if (!canManageFields(entity)) {
+    return null;
+  }
+
+  if (isLoading) {
+    return <div>Loading custom fields...</div>;
+  }
 
   return (
     <div className="space-y-6 p-4 bg-white rounded-lg shadow">
@@ -111,7 +172,7 @@ export function CustomFieldsManager({ entity }: CustomFieldsManagerProps) {
       <div className="mt-8">
         <h4 className="text-md font-medium mb-4">Existing Custom Fields</h4>
         <div className="space-y-4">
-          {entityFields.map((field) => (
+          {customFields.map((field) => (
             <div key={field.id} className="flex items-center justify-between p-4 bg-gray-50 rounded">
               <div>
                 <p className="font-medium">{field.label}</p>
@@ -121,10 +182,7 @@ export function CustomFieldsManager({ entity }: CustomFieldsManagerProps) {
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => {
-                    deleteCustomField(field.id);
-                    toast.success('Field deleted successfully');
-                  }}
+                  onClick={() => handleDeleteField(field.id)}
                 >
                   Delete
                 </Button>
