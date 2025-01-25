@@ -11,6 +11,37 @@ const Dashboard = () => {
   const location = useLocation();
   const [userRole, setUserRole] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [statsData, setStatsData] = useState({
+    totalPersonnel: '...',
+    activeCases: '...',
+    announcements: '...',
+    securityLevel: 'High'
+  });
+
+  // Fetch counts from database
+  const fetchStats = async () => {
+    try {
+      // Get total personnel (soldiers + officers)
+      const [soldiersCount, officersCount, casesCount, announcementsCount] = await Promise.all([
+        supabase.from('soldiers').select('*', { count: 'exact', head: true }),
+        supabase.from('officers').select('*', { count: 'exact', head: true }),
+        supabase.from('cases').select('*', { count: 'exact', head: true }).eq('status', 'open'),
+        supabase.from('announcements').select('*', { count: 'exact', head: true }).eq('status', 'active')
+      ]);
+
+      const totalPersonnel = (soldiersCount.count || 0) + (officersCount.count || 0);
+      
+      setStatsData({
+        totalPersonnel: totalPersonnel.toString(),
+        activeCases: (casesCount.count || 0).toString(),
+        announcements: (announcementsCount.count || 0).toString(),
+        securityLevel: 'High' // This could be dynamic based on some security criteria
+      });
+    } catch (error) {
+      console.error('Error fetching stats:', error);
+      toast.error('Error fetching dashboard statistics');
+    }
+  };
 
   useEffect(() => {
     const fetchUserRole = async () => {
@@ -40,33 +71,47 @@ const Dashboard = () => {
     };
 
     fetchUserRole();
+    fetchStats();
+
+    // Set up real-time subscription for updates
+    const channel = supabase
+      .channel('schema-db-changes')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'soldiers' }, () => fetchStats())
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'officers' }, () => fetchStats())
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'cases' }, () => fetchStats())
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'announcements' }, () => fetchStats())
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, []);
 
   const stats = [
     {
       title: "Total Personnel",
-      value: "1,234",
+      value: statsData.totalPersonnel,
       icon: Users,
       color: "text-blue-500",
       requiredRole: "user",
     },
     {
       title: "Active Cases",
-      value: "42",
+      value: statsData.activeCases,
       icon: FileText,
       color: "text-green-500",
       requiredRole: "user",
     },
     {
       title: "Announcements",
-      value: "8",
+      value: statsData.announcements,
       icon: Bell,
       color: "text-yellow-500",
       requiredRole: "user",
     },
     {
       title: "Security Level",
-      value: "High",
+      value: statsData.securityLevel,
       icon: Shield,
       color: "text-red-500",
       requiredRole: "admin",
