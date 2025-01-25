@@ -5,23 +5,34 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
 
-const Login = () => {
-  const [credentials, setCredentials] = useState({ username: "", password: "" });
+const Register = () => {
+  const [formData, setFormData] = useState({
+    username: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+  });
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: Implement actual authentication
-    if (credentials.username && credentials.password) {
-      toast.success("Login successful");
-      navigate("/dashboard");
+    
+    if (formData.password !== formData.confirmPassword) {
+      toast.error("Passwords do not match");
+      return;
+    }
+
+    // TODO: Implement actual registration
+    if (formData.username && formData.email && formData.password) {
+      toast.success("Registration successful");
+      navigate("/");
     } else {
       toast.error("Please fill in all fields");
     }
   };
 
-  const handleRegister = () => {
-    navigate("/register");
+  const handleLogin = () => {
+    navigate("/");
   };
 
   return (
@@ -38,9 +49,20 @@ const Login = () => {
               <Input
                 type="text"
                 placeholder="Username"
-                value={credentials.username}
+                value={formData.username}
                 onChange={(e) =>
-                  setCredentials({ ...credentials, username: e.target.value })
+                  setFormData({ ...formData, username: e.target.value })
+                }
+                className="w-full"
+              />
+            </div>
+            <div className="space-y-2">
+              <Input
+                type="email"
+                placeholder="Email"
+                value={formData.email}
+                onChange={(e) =>
+                  setFormData({ ...formData, email: e.target.value })
                 }
                 className="w-full"
               />
@@ -49,24 +71,35 @@ const Login = () => {
               <Input
                 type="password"
                 placeholder="Password"
-                value={credentials.password}
+                value={formData.password}
                 onChange={(e) =>
-                  setCredentials({ ...credentials, password: e.target.value })
+                  setFormData({ ...formData, password: e.target.value })
+                }
+                className="w-full"
+              />
+            </div>
+            <div className="space-y-2">
+              <Input
+                type="password"
+                placeholder="Confirm Password"
+                value={formData.confirmPassword}
+                onChange={(e) =>
+                  setFormData({ ...formData, confirmPassword: e.target.value })
                 }
                 className="w-full"
               />
             </div>
             <Button type="submit" className="w-full bg-military-navy hover:bg-military-navy/90">
-              Login
+              Register
             </Button>
             <div className="text-center mt-4">
               <Button
                 type="button"
                 variant="link"
-                onClick={handleRegister}
+                onClick={handleLogin}
                 className="text-military-navy"
               >
-                Don't have an account? Register
+                Already have an account? Login
               </Button>
             </div>
           </form>
@@ -76,4 +109,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default Register;
