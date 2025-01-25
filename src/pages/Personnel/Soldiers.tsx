@@ -70,7 +70,10 @@ export default function SoldiersPage() {
   const handleCreate = (data: Record<string, string>) => {
     const newSoldier: Soldier = {
       id: Date.now().toString(),
-      ...data,
+      name: data.name,
+      rank: data.rank,
+      unit: data.unit,
+      status: data.status,
     };
     setSoldiers((prev) => [...prev, newSoldier]);
     toast.success("Soldier added successfully");
