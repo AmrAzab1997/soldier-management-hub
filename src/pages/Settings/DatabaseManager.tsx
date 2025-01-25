@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Database } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -31,23 +31,22 @@ export default function DatabaseManager() {
   const [isDeveloper, setIsDeveloper] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  // Check if user is a developer on component mount
-  useState(() => {
+  useEffect(() => {
+    const checkDeveloperStatus = async () => {
+      try {
+        const { data, error } = await supabase.rpc('is_developer');
+        if (error) throw error;
+        setIsDeveloper(data);
+      } catch (error) {
+        console.error('Error checking developer status:', error);
+        toast.error('Failed to verify permissions');
+      } finally {
+        setLoading(false);
+      }
+    };
+
     checkDeveloperStatus();
   }, []);
-
-  const checkDeveloperStatus = async () => {
-    try {
-      const { data, error } = await supabase.rpc('is_developer');
-      if (error) throw error;
-      setIsDeveloper(data);
-    } catch (error) {
-      console.error('Error checking developer status:', error);
-      toast.error('Failed to verify permissions');
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleAddField = () => {
     if (!newField.name) {
