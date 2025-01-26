@@ -16,7 +16,7 @@ const SettingsPage = () => {
       </div>
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        <Link to="/settings/custom-fields" className="block">
+        <Link to="/settings/custom-fields">
           <Card className="h-full transition-colors hover:bg-accent">
             <CardHeader>
               <ListPlus className="h-8 w-8 text-military-navy mb-2" />
@@ -29,7 +29,7 @@ const SettingsPage = () => {
           </Card>
         </Link>
 
-        <Link to="/settings/database" className="block">
+        <Link to="/settings/database">
           <Card className="h-full transition-colors hover:bg-accent">
             <CardHeader>
               <Database className="h-8 w-8 text-military-navy mb-2" />
