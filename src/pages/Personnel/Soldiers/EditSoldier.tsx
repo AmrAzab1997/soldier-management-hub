@@ -18,11 +18,17 @@ const EditSoldier = () => {
         .from("soldiers")
         .select("*")
         .eq("id", id)
-        .single();
+        .maybeSingle();
 
       if (error) {
         toast.error("Error loading soldier");
         throw error;
+      }
+
+      if (!data) {
+        toast.error("Soldier not found");
+        navigate("/personnel/soldiers");
+        return null;
       }
 
       return data;
@@ -101,6 +107,14 @@ const EditSoldier = () => {
     );
   }
 
+  if (!soldier) {
+    return (
+      <div className="text-center py-8">
+        <p className="text-muted-foreground">Soldier not found</p>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -109,22 +123,20 @@ const EditSoldier = () => {
           Back to Soldiers
         </Button>
       </div>
-      {soldier && (
-        <CreateResourceDialog
-          title="Edit Soldier"
-          description="Update the soldier's details."
-          fields={soldierFields}
-          onSubmit={updateSoldier}
-          initialData={{
-            first_name: soldier.first_name,
-            last_name: soldier.last_name,
-            rank: soldier.rank,
-            service_number: soldier.service_number,
-            unit: soldier.unit || "",
-            status: soldier.status || "",
-          }}
-        />
-      )}
+      <CreateResourceDialog
+        title="Edit Soldier"
+        description="Update the soldier's details."
+        fields={soldierFields}
+        onSubmit={updateSoldier}
+        initialData={{
+          first_name: soldier.first_name,
+          last_name: soldier.last_name,
+          rank: soldier.rank,
+          service_number: soldier.service_number,
+          unit: soldier.unit || "",
+          status: soldier.status || "",
+        }}
+      />
     </div>
   );
 };
