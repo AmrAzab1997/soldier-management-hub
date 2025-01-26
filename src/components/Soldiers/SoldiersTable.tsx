@@ -33,8 +33,16 @@ export function SoldiersTable({
   onUpdate,
   soldierFields,
 }: SoldiersTableProps) {
+  if (!soldiers || soldiers.length === 0) {
+    return (
+      <div className="text-center py-8 text-muted-foreground">
+        No soldiers found.
+      </div>
+    );
+  }
+
   return (
-    <>
+    <div className="border rounded-lg">
       <Table>
         <TableHeader>
           <TableRow>
@@ -48,25 +56,33 @@ export function SoldiersTable({
         <TableBody>
           {soldiers.map((soldier) => (
             <TableRow key={soldier.id}>
-              <TableCell>{soldier.name}</TableCell>
+              <TableCell className="font-medium">{soldier.name}</TableCell>
               <TableCell>{soldier.rank}</TableCell>
               <TableCell>{soldier.unit}</TableCell>
-              <TableCell>{soldier.status}</TableCell>
-              <TableCell className="text-right space-x-2">
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => onEdit(soldier)}
-                >
-                  <Edit2 className="h-4 w-4" />
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => onDelete(soldier.id)}
-                >
-                  <Trash2 className="h-4 w-4" />
-                </Button>
+              <TableCell>
+                <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                  soldier.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
+                }`}>
+                  {soldier.status}
+                </span>
+              </TableCell>
+              <TableCell className="text-right">
+                <div className="flex justify-end gap-2">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => onEdit(soldier)}
+                  >
+                    <Edit2 className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => onDelete(soldier.id)}
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </div>
               </TableCell>
             </TableRow>
           ))}
@@ -87,6 +103,6 @@ export function SoldiersTable({
           }}
         />
       )}
-    </>
+    </div>
   );
 }
