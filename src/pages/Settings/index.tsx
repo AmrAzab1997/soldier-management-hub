@@ -2,10 +2,9 @@ import { Settings as SettingsIcon, Database, ListPlus } from "lucide-react";
 import { Link } from "react-router-dom";
 import {
   Card,
-  CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
+  CardDescription,
 } from "@/components/ui/card";
 
 const SettingsPage = () => {
