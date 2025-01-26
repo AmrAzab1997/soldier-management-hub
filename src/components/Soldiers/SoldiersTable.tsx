@@ -10,6 +10,7 @@ import {
 import { CreateResourceDialog } from "@/components/CreateResourceDialog";
 import { Edit2, Trash2 } from "lucide-react";
 import { Soldier } from "@/types/soldier";
+import { useNavigate } from "react-router-dom";
 
 interface SoldiersTableProps {
   soldiers: Soldier[];
@@ -33,6 +34,8 @@ export function SoldiersTable({
   onUpdate,
   soldierFields,
 }: SoldiersTableProps) {
+  const navigate = useNavigate();
+
   if (!soldiers || soldiers.length === 0) {
     return (
       <div className="text-center py-8 text-muted-foreground">
@@ -71,7 +74,7 @@ export function SoldiersTable({
                   <Button
                     variant="ghost"
                     size="icon"
-                    onClick={() => onEdit(soldier)}
+                    onClick={() => navigate(`/personnel/soldiers/edit/${soldier.id}`)}
                   >
                     <Edit2 className="h-4 w-4" />
                   </Button>
