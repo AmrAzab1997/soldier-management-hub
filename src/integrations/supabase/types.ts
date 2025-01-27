@@ -261,6 +261,42 @@ export type Database = {
         }
         Relationships: []
       }
+      officers: {
+        Row: {
+          badge_number: string
+          created_at: string
+          created_by: string | null
+          department: string | null
+          first_name: string
+          id: string
+          last_name: string
+          rank: string
+          status: string | null
+        }
+        Insert: {
+          badge_number: string
+          created_at?: string
+          created_by?: string | null
+          department?: string | null
+          first_name: string
+          id?: string
+          last_name: string
+          rank: string
+          status?: string | null
+        }
+        Update: {
+          badge_number?: string
+          created_at?: string
+          created_by?: string | null
+          department?: string | null
+          first_name?: string
+          id?: string
+          last_name?: string
+          rank?: string
+          status?: string | null
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string
@@ -312,6 +348,42 @@ export type Database = {
           id?: string
           is_required?: boolean | null
           updated_at?: string
+        }
+        Relationships: []
+      }
+      soldiers: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          first_name: string
+          id: string
+          last_name: string
+          rank: string
+          service_number: string
+          status: string | null
+          unit: string | null
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          first_name: string
+          id?: string
+          last_name: string
+          rank: string
+          service_number: string
+          status?: string | null
+          unit?: string | null
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          first_name?: string
+          id?: string
+          last_name?: string
+          rank?: string
+          service_number?: string
+          status?: string | null
+          unit?: string | null
         }
         Relationships: []
       }
