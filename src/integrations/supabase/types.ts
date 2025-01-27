@@ -114,6 +114,39 @@ export type Database = {
         }
         Relationships: []
       }
+      custom_tables: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          description: string | null
+          fields: Json
+          id: string
+          is_visible: boolean | null
+          name: string
+          table_name: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          fields: Json
+          id?: string
+          is_visible?: boolean | null
+          name: string
+          table_name: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          fields?: Json
+          id?: string
+          is_visible?: boolean | null
+          name?: string
+          table_name?: string
+        }
+        Relationships: []
+      }
       entity_fields: {
         Row: {
           created_at: string
@@ -150,42 +183,81 @@ export type Database = {
         }
         Relationships: []
       }
-      officers: {
+      future_events: {
         Row: {
-          badge_number: string
           created_at: string
           created_by: string | null
-          custom_fields: Json | null
-          department: string | null
-          first_name: string
+          date_added: string
+          description: string | null
+          end_date: string
+          end_time: string
+          event_date: string
           id: string
-          last_name: string
-          rank: string
-          status: string | null
+          notes: string | null
+          start_date: string
+          time_statred: string
+          title: string
         }
         Insert: {
-          badge_number: string
           created_at?: string
           created_by?: string | null
-          custom_fields?: Json | null
-          department?: string | null
-          first_name: string
+          date_added: string
+          description?: string | null
+          end_date: string
+          end_time: string
+          event_date: string
           id?: string
-          last_name: string
-          rank: string
-          status?: string | null
+          notes?: string | null
+          start_date: string
+          time_statred: string
+          title: string
         }
         Update: {
-          badge_number?: string
           created_at?: string
           created_by?: string | null
-          custom_fields?: Json | null
-          department?: string | null
-          first_name?: string
+          date_added?: string
+          description?: string | null
+          end_date?: string
+          end_time?: string
+          event_date?: string
           id?: string
-          last_name?: string
-          rank?: string
-          status?: string | null
+          notes?: string | null
+          start_date?: string
+          time_statred?: string
+          title?: string
+        }
+        Relationships: []
+      }
+      officer_fields: {
+        Row: {
+          created_at: string
+          field_label: string
+          field_name: string
+          field_order: number | null
+          field_type: string
+          id: string
+          is_required: boolean | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          field_label: string
+          field_name: string
+          field_order?: number | null
+          field_type?: string
+          id?: string
+          is_required?: boolean | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          field_label?: string
+          field_name?: string
+          field_order?: number | null
+          field_type?: string
+          id?: string
+          is_required?: boolean | null
+          updated_at?: string
         }
         Relationships: []
       }
@@ -210,42 +282,36 @@ export type Database = {
         }
         Relationships: []
       }
-      soldiers: {
+      soldier_fields: {
         Row: {
           created_at: string
-          created_by: string | null
-          custom_fields: Json | null
-          first_name: string
+          field_label: string
+          field_name: string
+          field_order: number | null
+          field_type: string
           id: string
-          last_name: string
-          rank: string
-          service_number: string
-          status: string | null
-          unit: string | null
+          is_required: boolean | null
+          updated_at: string
         }
         Insert: {
           created_at?: string
-          created_by?: string | null
-          custom_fields?: Json | null
-          first_name: string
+          field_label: string
+          field_name: string
+          field_order?: number | null
+          field_type?: string
           id?: string
-          last_name: string
-          rank: string
-          service_number: string
-          status?: string | null
-          unit?: string | null
+          is_required?: boolean | null
+          updated_at?: string
         }
         Update: {
           created_at?: string
-          created_by?: string | null
-          custom_fields?: Json | null
-          first_name?: string
+          field_label?: string
+          field_name?: string
+          field_order?: number | null
+          field_type?: string
           id?: string
-          last_name?: string
-          rank?: string
-          service_number?: string
-          status?: string | null
-          unit?: string | null
+          is_required?: boolean | null
+          updated_at?: string
         }
         Relationships: []
       }
@@ -280,6 +346,12 @@ export type Database = {
           user_id: string
         }
         Returns: boolean
+      }
+      execute_sql_query: {
+        Args: {
+          sql_query: string
+        }
+        Returns: Json
       }
       get_user_id_by_email: {
         Args: {
