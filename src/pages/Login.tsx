@@ -39,7 +39,7 @@ const Login = () => {
   useEffect(() => {
     const checkSession = async () => {
       const { data: { session } } = await supabase.auth.getSession();
-      if (session) {
+      if (session?.user) {
         navigate("/");
       }
     };
@@ -50,40 +50,48 @@ const Login = () => {
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
       setIsLoading(true);
-      const { data, error } = await supabase.auth.signInWithPassword({
+
+      // Sign in the user
+      const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
         email: values.email,
         password: values.password,
       });
 
-      if (error) {
-        console.error('Authentication error:', error);
-        throw error;
+      if (authError) {
+        console.error('Authentication error:', authError);
+        throw authError;
       }
 
-      if (data.session) {
-        // Check user role after successful login
-        const { data: roleData, error: roleError } = await supabase
-          .from('user_roles')
-          .select('role')
-          .eq('user_id', data.session.user.id)
-          .single();
+      if (!authData.session?.user) {
+        throw new Error('No user data returned after login');
+      }
 
-        if (roleError) {
-          console.error('Error fetching user role:', roleError);
-          toast({
-            variant: "destructive",
-            title: "Error",
-            description: "Failed to fetch user role",
-          });
-          return;
-        }
+      // Fetch user role
+      const { data: roleData, error: roleError } = await supabase
+        .from('user_roles')
+        .select('role')
+        .eq('user_id', authData.session.user.id)
+        .single();
 
+      if (roleError) {
+        console.error('Error fetching user role:', roleError);
+        // Don't throw here, just show a warning
         toast({
-          title: "Success",
-          description: "You have successfully logged in",
+          variant: "destructive",
+          title: "Warning",
+          description: "Role information couldn't be fetched, but you're logged in",
         });
-        navigate("/");
+      } else {
+        console.log('User role fetched successfully:', roleData);
       }
+
+      // Show success message and navigate
+      toast({
+        title: "Success",
+        description: "You have successfully logged in",
+      });
+      
+      navigate("/");
     } catch (error: any) {
       toast({
         variant: "destructive",
